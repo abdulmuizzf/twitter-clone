@@ -1,0 +1,173 @@
+* {
+    margin: 0px;
+    padding: 0px;
+    box-sizing: border-box;
+}
+
+body {
+    --blue: #50b7f5;
+    --bg-blue: #81b6d6;
+    --dark-blue: #45a6e4;
+    --gray-one: #F5F8FA;
+    --gray-two: #E1E8ED;
+    --gray-three: #AAB8C2;
+    --gray-four: #657786;
+    --black: #14171A;
+
+    display: flex;
+    height: 100%;
+    max-width: 1200px;
+    margin: auto;
+    padding: 0 10px;
+}
+
+.sidebar {
+    border-right: 1px solid var(--gray-two);
+    flex: 0.2;
+  
+    min-width: 250px;
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+
+.sidebar-item {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.sidebar-item h5 {
+    font-weight: 500;
+    font-size: 18px;
+    margin-right: 20px;
+    padding-top: 5px;
+}
+
+.sidebar-item .material-icons-outlined {
+    padding: 10px;
+}
+
+.fa-twitter-square {
+    padding: 5px 5px;
+    color: var(--blue);
+    font-size: 40px;
+    border-radius: 5px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.fa-twitter-square:hover {
+    background-color: var(--gray-two);
+}
+
+.sidebar-item.active{
+    color: var(--blue);
+}
+.sidebar-item:hover {
+    background-color: var(--gray-two);
+    border-radius: 15px;
+    color: var(--blue);
+    transition: color 180ms ease-out;
+}
+
+.tweet-button {
+    width: 100%;
+    height: 40px;
+    border-radius: 15px;
+    background-color: var(--blue);
+    border: none;
+    color: white;
+    font-weight: 900;
+    margin-top: 10px;
+}
+
+.tweet-button:hover {
+    background-color: var(--dark-blue);
+}
+
+/**************************************************************************************/
+
+.feed-area {
+    width: 50%;
+    max-width: 50%;
+    border-right: 1px solid var(--gray-two);
+}
+.home-header {
+    padding: 10px;
+    border-bottom: 1px solid var(--gray-two);
+    cursor: pointer;
+}
+.home-header h5{
+font-weight: 500;
+font-size: 18px;
+padding-top: 5px;
+}
+
+/**********************************************************************************/
+
+
+.post-container{
+    display: flex;
+    border: 1px solid var(--gray-two);
+    cursor: pointer;
+}
+.post-container:hover{
+    background-color: var(--gray-two);
+}
+
+.post-profilediv {
+    width: 45px;
+    margin: 10px;
+}
+.post-profilediv img{
+    background-color: var(--gray-one);
+    border-radius: 15px;
+    object-fit: cover;
+}
+.post-body {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    margin-right: 10px;
+    cursor: pointer;
+}
+.post-author {
+    font-weight: 600;
+    font-size: 15px;
+}
+.username {
+    font-size: 15px;
+    color: var(--gray-four);
+}
+.post-age {
+    font-size: 15px;
+}
+.post-text {
+    font-size: 15px;
+}
+.post-reaction{
+    margin-top: 10px;
+}
+.post-button {
+    display: inline-block;
+    text-align: center;
+    width: 60px;
+    height: 20px;
+    cursor: pointer;
+    margin-left: 5vw;
+}
+.post-button:hover {
+    background-color: var(--gray-two);
+    border-radius: 15px;
+    color: var(--blue);
+    transition: color 180ms ease-out;
+}
+.post-button span{
+    font-size: 18px;
+}
+.reaction-count {
+    font-size: 15px;
+    padding-bottom: 5px;
+}
+
+
+

@@ -1,0 +1,68 @@
+{% extends 'twitter/base.html' %}
+{% load static %}
+
+{% block head %}
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined" rel="stylesheet">
+<link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css"
+    integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous" />
+<link rel="stylesheet" href="{% static 'twitter/home.css' %}">
+<title>Home - Twitter</title>
+{% endblock %}
+<!-- style="background-color: #cccccc"-->
+{% block content %}
+
+<!--sidebar begins-->
+<div class="sidebar">
+    <i class="fab fa-twitter-square"></i>
+    <div class="sidebar-item active">
+        <span class="material-icons-outlined">home</span>
+        <h5>Home</h5>
+    </div>
+    <div class="sidebar-item">
+        <span class="material-icons-outlined">person_outline</span>
+        <h5>Profile</h5>
+    </div>
+    <button class="tweet-button">Tweet</button>
+</div>
+<!--sidebar ends-->
+<div class="feed-area">
+    <div class="home-header">
+        <h5>Home</h5>
+    </div>
+    <div class="feed">
+
+        {% for post in posts %}
+        <div class="post-container">
+            <div class="post-profilediv">
+                <img src="{% static 'media/profiles/default.png'%}" width="45" height="45">
+            </div>
+            <div class="post-body">
+                <div class="post-head">
+                    <span class="post-author">{{post.author}}</span>
+                    <span class="username">&nbsp;@{{post.author.username}}</span>
+                    <span class="post-age">·12h</span>
+                </div>
+                <div class="post-text">
+                    {{post.content}}
+                </div>
+                <div class="post-reaction">
+                    <div class="post-button">
+                        <span class="material-icons-outlined">mode_comment</span>
+                        <a class="reaction-count">1</a>
+                    </div>
+                    <div class="post-button">
+                        <span class="material-icons-outlined">repeat</span>
+                        <a class="reaction-count">12</a>
+                    </div>
+                    <div class="post-button"><span class="material-icons-outlined">favorite_border</span>
+                        <a class="reaction-count">95</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+
+    </div>
+</div>
+
+{% endblock %}
