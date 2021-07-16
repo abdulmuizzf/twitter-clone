@@ -1,0 +1,24 @@
+{% extends 'twitter/base.html' %}
+{% load static %}
+{% block head %}
+<title>Welcome to Twitter</title>
+<link rel="stylesheet" type="text/css" href="{% static 'twitter/login.css'%}">
+{% endblock %}
+
+{% block content %}
+
+<div class="container block-container">
+    <div class="text-center">
+        <br />
+        <h1>{{title}}</h1>
+    </div>
+    <div class="row h-75 d-flex justify-content-center">
+        <div class="w-50 mt-5 p-5">
+            <div class=""></div>
+            <div id="sawo-form" class="my-auto mx-auto">
+                {% include 'partial/_sawo.html' %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

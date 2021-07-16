@@ -1,0 +1,63 @@
+
+    {% load static %}
+    {% csrf_token %}
+    <div id="sawo-container" class="my-auto mx-auto" style="height: 300px; width: 300px; background-color: #F5F8FA"></div>
+    <script src="http://websdk.sawolabs.com/sawo.min.js"></script>  
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script>
+        const createErrorElement = () => {
+            var errorElement = document.createElement("div");
+            errorElement.id = "unauth-error"
+            errorElement.style.textAlign = "center";
+            errorElement.style.color = '#dc3545';
+            errorElement.style.backgroundColor  = '#F5F8FA';
+            errorElement.classList.add(['mx-auto','my-auto']);
+            sawoElement = document.getElementById('sawo-container');
+            sawoElement.parentElement.insertBefore(errorElement,sawoElement);
+            return errorElement
+        }
+        const setErrorText = (element, text) => {
+            var text = document.createTextNode(text);
+            errorElement.appendChild(text);
+        }
+        const removeError = () => {
+            errorElement = document.getElementById('unauth-error');
+            if (errorElement){
+                errorElement.remove();
+            }
+        }
+    </script>
+    <script>
+        var config = {
+            containerID: "sawo-container",
+            identifierType: "{{sawo.identifier}}",
+            apiKey: "{{sawo.auth_key}}",
+            onSuccess: (payload) => {
+                removeError()
+                axios({
+                    method:"post",
+                    url: "/{{sawo.to}}",
+                    data: {payload},
+                    })
+                .then((res)=>{
+                    if (res.data.redirect){
+                        location.href = res.data.redirect;
+                    }
+                    else {
+                        location.reload();
+                    }
+                })
+                .catch(function (error) {
+                        console.log(error.response.data);
+                        console.log(error.response.status);
+                        console.log(error.response.headers);
+                        sawo.showForm();
+                        errorElement = createErrorElement();
+                        setErrorText(errorElement, "Error: Unauthorized request")
+                    }
+                )
+            },
+        };
+        var sawo = new Sawo(config);
+        sawo.showForm();
+    </script>

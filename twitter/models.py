@@ -19,7 +19,7 @@ class User(AbstractUser):
     )
     password = None
     bio = models.CharField(max_length=160)
-    profile_pic = models.ImageField()
+    profile_pic = models.ImageField(upload_to='profiles', blank=True, null=True)
     followers = models.ManyToManyField('User', related_name="following")
 
 
@@ -54,3 +54,8 @@ class Feed(models.Model):
     activity_type = models.CharField(max_length=2, choices=[("TW","Tweet"),("RT","Retweet"),("CM","Comment")])
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
     publisher = models.ForeignKey(User, on_delete=models.CASCADE, related_name="activity")
+
+
+class Config(models.Model):
+    api_key = models.CharField(max_length=200)
+    identifier = models.CharField(max_length=200, choices = [("email","Email"),("phone_number_sms","Phone")])

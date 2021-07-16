@@ -1,0 +1,14 @@
+html, body {
+    margin:0px;
+    height:100%;
+}
+
+.page {
+    background:#F5F8FA;
+    height:100%;
+}
+
+.block-container{
+    background:#F5F8FA;
+    height:100%;
+}

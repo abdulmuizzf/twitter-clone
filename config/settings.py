@@ -40,10 +40,6 @@ AUTHENTICATION_BACKENDS = ['twitter.backends.SawoBackend',]
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-CORS_ORIGIN_WHITELIST = (
-    'http://localhost:8080',
-)
-
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
@@ -83,6 +79,10 @@ INSTALLED_APPS = [
 
 LANGUAGE_CODE = 'en-us'
 
+LOGIN_URL = '/login/'
+
+LOGIN_REDIRECT_URL = '/home/'
+
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 MEDIA_URL = '/media/' # 'http://myhost:port/media/'
@@ -91,7 +91,6 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -104,6 +103,8 @@ ROOT_URLCONF = 'config.urls'
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
 STATIC_URL = '/static/'
+
+STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/

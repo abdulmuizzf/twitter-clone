@@ -3,9 +3,9 @@ from django.contrib.auth.backends import ModelBackend
 from .models import User
 
 class SawoBackend(ModelBackend):
-    def authenticate(self, request, username, password=None, token=None):
+    def authenticate(self, request, email=None, password=None):
         try:
-            user = User.objects.get(username=username)
+            user = User.objects.get(email=email)
         except User.DoesNotExist:
             return None
         else:
@@ -18,3 +18,4 @@ class SawoBackend(ModelBackend):
             return User.objects.get(pk=username)
         except User.DoesNotExist:
             return None
+        
