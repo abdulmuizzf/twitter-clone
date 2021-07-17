@@ -1,0 +1,113 @@
+{% extends 'twitter/base.html' %}
+{% load static %}
+
+{% block head %}
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined" rel="stylesheet">
+<link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css"
+    integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous" />
+<link rel="stylesheet" href="{% static 'twitter/tweet.css' %}">
+<title>Home - Twitter</title>
+{% endblock %}
+<!-- style="background-color: #cccccc"-->
+{% block content %}
+
+<!--sidebar begins-->
+<div class="sidebar">
+    <i class="fab fa-twitter-square"></i>
+    <div class="sidebar-item">
+        <span class="material-icons-outlined">home</span>
+        <h5>Home</h5>
+    </div>
+    <div class="sidebar-item">
+        <span class="material-icons-outlined">person_outline</span>
+        <h5>Profile</h5>
+    </div>
+    <button class="tweet-button">Tweet</button>
+</div>
+<!--sidebar ends-->
+<div class="feed-area">
+    <div class="home-header">
+        <span class="material-icons-outlined back-button">arrow_back</span>
+        <div class="tweet-head">
+            Tweet
+        </div>
+    </div>
+
+    <div class="post-container">
+        <div class="post-profile-div">
+            <div class="post-img-div">
+                <img src="{% static 'media/profiles/default.png'%}" width="45" height="45">
+            </div>
+
+            <div class="post-head">
+                <div class="post-author">{{tweet.author.first_name}}</div>
+                <div class="grayed-text">@{{{{tweet.author.username}}</div>
+            </div>
+        </div>
+        <div class="post-body">
+            <div class="post-text">
+                {{tweet.content}}
+            </div>
+            <div class="post-age">
+                {{Time}}&nbsp;·&nbsp;{{Date}}
+            </div>
+        </div>
+        <div class="post-reaction">
+            <div class="post-button">
+                <span class="material-icons-outlined">mode_comment</span>
+                <a class="post-reaction-count">{{tweet.comments.count}}</a>
+            </div>
+            <div class="post-button">
+                <span class="material-icons-outlined">repeat</span>
+                <a class="post-reaction-count">{{tweet.retweets.count}}</a>
+            </div>
+            <div class="post-button"><span class="material-icons-outlined">favorite_border</span>
+                <a class="post-reaction-count">{{tweet.likes.count}}</a>
+            </div>
+        </div>
+    </div>
+    <div style="height:15px;"></div>
+
+
+    <div class="feed">
+        {% for bundle in comments %}
+            <div class="cmt-bundle">
+                {% for comment in bundle %}
+                    
+                    <div class="cmt-container">
+                        <div class="cmt-profile-div">
+                            <img src="{% static 'media/profiles/default.png'%}" width="45" height="45">
+                        </div>
+                        <div class="cmt-body">
+                            <div class="cmt-head">
+                                <span class="cmt-author">{{comment.author.first_name}}</span>
+                                <span class="grayed-text">&nbsp;@{{comment.author.username}}&nbsp;·&nbsp;{{12h}}</span>
+                            </div>
+                            <div class="cmt-text">
+                                {{comment.content}}
+                            </div>
+                            <div class="cmt-reaction">
+                                <div class="cmt-button">
+                                    <span class="material-icons-outlined">mode_comment</span>
+                                    <a class="cmt-reaction-count">{{comment.comments.count}}</a>
+                                </div>
+                                <div class="cmt-button">
+                                    <span class="material-icons-outlined">repeat</span>
+                                    <a class="cmt-reaction-count">{{comment.retweets.count}}</a>
+                                </div>
+                                <div class="cmt-button">
+                                    <span class="material-icons-outlined">favorite_border</span>
+                                    <a class="cmt-reaction-count">{{comment.likes.count}}</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endfor %}
+
+        <div style="height:15px;"></div>
+    </div>
+</div>
+
+{% endblock %}

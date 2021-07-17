@@ -40,7 +40,8 @@ body {
     font-weight: 500;
     font-size: 18px;
     margin-right: 20px;
-    padding-top: 5px;
+    position: relative;
+    top:5px;
 }
 
 .sidebar-item .material-icons-outlined {
@@ -98,15 +99,16 @@ body {
     margin-top: 10px;
     cursor: pointer;
     border-bottom: 1px solid var(--gray-two);
+    padding-top: 5px;
 }
 .back-button {
-    text-align: center;
     padding: 5px;
     margin: 5px;
     color: var(--blue);
     border-radius: 100%;
     cursor: pointer;
-    display: inline-block;
+    position: relative;
+    bottom: 7px;
 }
 .back-button:hover{
     background-color: var(--gray-two);
@@ -115,7 +117,6 @@ body {
     font-weight: 500;
     font-size: 18px;
     display: inline-block;
-    padding-top: 5px;
 }
 /**************************************************************************************/
 .name-and-buttons {
@@ -133,10 +134,14 @@ body {
     margin-top: 55px;
     margin-left: 5px;
 }
-
+.profile-data{
+    padding-left: 16px;
+    padding-right: 16px;
+    margin-top: 12px;
+    margin-bottom: 12px;
+}
 .profile-name{
     display: inline-block;
-    margin-left: 10px;
 }
 .profile-display-name {
     font-weight: 500;
@@ -144,6 +149,9 @@ body {
 }
 .profile-buttons{
     display: inline-block;
+}
+.bio {
+    font-size: 15px;
 }
 
 .follow-button {
@@ -154,8 +162,6 @@ body {
     border: none;
     color: white;
     font-weight: 900;
-    margin-top: 10px;
-    margin-right: 10px;
     cursor: pointer;
 }
 .follow-button:hover {
@@ -169,10 +175,13 @@ body {
     height: 40px;
 }
 .tab-item{
+    color: var(--gray-four);
     display: inline-block;
     text-align: center;
     width: 50%;
     padding-top: 7px;
+    font-weight: 500;
+    cursor: pointer;
 }
 .tab-item:hover{
     background-color: var(--light-blue);
@@ -194,11 +203,11 @@ body {
     background-color: var(--gray-two);
 }
 
-.post-profilediv {
+.post-profile-div {
     width: 45px;
     margin: 10px;
 }
-.post-profilediv img{
+.post-profile-div img{
     background-color: var(--gray-one);
     border-radius: 15px;
     object-fit: cover;
@@ -213,12 +222,9 @@ body {
     font-weight: 600;
     font-size: 15px;
 }
-.username {
+.grayed-text {
     font-size: 15px;
     color: var(--gray-four);
-}
-.post-age {
-    font-size: 15px;
 }
 .post-text {
     font-size: 15px;
@@ -245,9 +251,10 @@ body {
 }
 .reaction-count {
     font-size: 15px;
-    padding-bottom: 5px;
+    padding-left: 5px;
+    position: relative;
+    bottom: 4px;
 }
-
 
 
 

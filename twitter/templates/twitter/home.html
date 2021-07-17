@@ -33,14 +33,14 @@
 
         {% for post in posts %}
         <div class="post-container">
-            <div class="post-profilediv">
+            <div class="post-profile-div">
                 <img src="{% static 'media/profiles/default.png'%}" width="45" height="45">
             </div>
             <div class="post-body">
                 <div class="post-head">
                     <span class="post-author">{{post.author}}</span>
-                    <span class="username">&nbsp;@{{post.author.username}}</span>
-                    <span class="post-age">·12h</span>
+                    <span class="grayed-text">&nbsp;@{{post.author.username}}</span>
+                    <span class="grayed-text">&nbsp;·&nbsp;12h</span>
                 </div>
                 <div class="post-text">
                     {{post.content}}

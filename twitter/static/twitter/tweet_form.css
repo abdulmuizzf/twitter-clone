@@ -1,0 +1,111 @@
+
+body {
+    --light-blue: #b9e1fa;
+    --blue: #50b7f5;
+    --dark-blue: #45a6e4;
+    --gray-one: #F5F8FA;
+    --gray-two: #E1E8ED;
+    --gray-three: #AAB8C2;
+    --gray-four: #657786;
+    --black: #14171A;
+
+    display: flex;
+    height: 100%;
+    max-width: 1200px;
+    margin: auto;
+    padding: 0 10px;
+}
+.form-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    background-color: gra;
+}
+/******************************************************************************************************************/
+
+.home-header {
+    background-color: var(--gray-one);
+    padding: 5px;
+    display: flex;
+    border-radius: 20px;
+}
+.back-button {
+    text-align: center;
+    padding: 5px;
+    margin: 5px;
+    color: var(--blue);
+    border-radius: 100%;
+    cursor: pointer;
+    display: inline-block;
+}
+.back-button:hover{
+    background-color: var(--gray-two);
+}
+
+/******************************************************************************************************************/
+
+.form-outer {
+    width: 620px;
+    height: 350px;
+    margin-top: 30px;
+    border-radius: 20px;
+    border: 1px solid var(--gray-two);
+}
+.tweet-area {
+    width: 620px;
+    height: 320px;
+    padding: 10px;
+    margin: auto;
+    justify-content: center;
+    display: flex;
+    border: 1px solid var(--gray-two);
+    background-color: white;
+}
+
+.profile-pic {
+    width: 60px;
+}
+.profile-pic img{
+    background-color: var(--gray-one);
+    border-radius: 15px;
+    object-fit: cover;
+}
+
+.tweet-box {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.tweet-input {
+    flex:1;
+    width: 100%;
+    height: 150%;
+    font-size: 18px;
+    padding: 12px;
+    border:none;
+}
+
+.tweet-control {
+    display: flex;
+    justify-content: right;
+    border-top: 1px solid var(--gray-two);
+}
+
+.tweet-button {
+    width: 100px;
+    height: 40px;
+    border-radius: 15px;
+    background-color: var(--blue);
+    border: none;
+    color: white;
+    font-weight: 900;
+    margin-top: 10px;
+    margin-right: 10px;
+    cursor: pointer;
+}
+.tweet-button:hover {
+    background-color: var(--dark-blue);
+}
+

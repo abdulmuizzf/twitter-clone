@@ -93,32 +93,50 @@ body {
     max-width: 50%;
     border-right: 1px solid var(--gray-two);
 }
+
 .home-header {
-    padding: 10px;
-    border-bottom: 1px solid var(--gray-two);
-    cursor: pointer;
-}
-.home-header h5{
-font-weight: 500;
-font-size: 18px;
-padding-top: 5px;
-}
-
-/**********************************************************************************/
-
-
-.post-container{
     display: flex;
-    border: 1px solid var(--gray-two);
+    margin-top: 10px;
     cursor: pointer;
+    border-bottom: 1px solid var(--gray-two);
+    padding-top: 5px;
 }
-.post-container:hover{
+.back-button {
+    padding: 5px;
+    margin: 5px;
+    color: var(--blue);
+    border-radius: 100%;
+    cursor: pointer;
+    position: relative;
+    bottom: 7px;
+}
+.back-button:hover{
     background-color: var(--gray-two);
 }
-
+.tweet-head {
+    font-weight: 500;
+    font-size: 18px;
+    display: inline-block;
+}
+/**********************************************************************************/
+/* For the original post */
+.ht-20{
+    height: 20px;
+}
+.post-container{
+    border: 1px solid var(--gray-two);
+    padding: 16px;
+}
 .post-profile-div {
+    display: flex;
+}
+.post-image-div{
     width: 45px;
+    height: 45px;
     margin: 10px;
+}
+.post-head{
+    padding-left: 10px;
 }
 .post-profile-div img{
     background-color: var(--gray-one);
@@ -129,7 +147,6 @@ padding-top: 5px;
     margin-top: 10px;
     margin-bottom: 10px;
     margin-right: 10px;
-    cursor: pointer;
 }
 .post-author {
     font-weight: 600;
@@ -140,18 +157,24 @@ padding-top: 5px;
     color: var(--gray-four);
 }
 .post-text {
-    font-size: 15px;
+    font-size: 20px;
+}
+.post-age {
+    color: var(--gray-four);
+    padding-top: 5px;
+    padding-bottom: 5px;
 }
 .post-reaction{
-    margin-top: 10px;
+    border-top: 1px solid var(--gray-two);
+    padding-top: 15px;
 }
 .post-button {
     display: inline-block;
     text-align: center;
     width: 60px;
-    height: 20px;
+    height: 30px;
     cursor: pointer;
-    margin-left: 5vw;
+    margin-left: 6vw;
 }
 .post-button:hover {
     background-color: var(--gray-two);
@@ -162,11 +185,79 @@ padding-top: 5px;
 .post-button span{
     font-size: 18px;
 }
-.reaction-count {
+.post-reaction-count {
+    font-size: 15px;
+    padding-left: 5px;
+}
+.post-button span {
+    position: relative;
+    top: 4px;
+}
+
+
+
+/**********************************************************************************/
+/* For post replies */
+
+.cmt-bundle{
+    border: 1px solid var(--gray-two);
+}
+.cmt-container{
+    display: flex;
+    cursor: pointer;
+}
+.cmt-container:hover{
+    background-color: var(--gray-two);
+}
+
+.cmt-profile-div {
+    width: 45px;
+    margin: 10px;
+}
+.cmt-profile-div img{
+    background-color: var(--gray-one);
+    border-radius: 15px;
+    object-fit: cover;
+}
+.cmt-body {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    margin-right: 10px;
+    cursor: pointer;
+}
+.cmt-author {
+    font-weight: 600;
+    font-size: 15px;
+}
+.cmt-text {
+    font-size: 15px;
+}
+.cmt-reaction{
+    margin-top: 10px;
+}
+.cmt-button {
+    display: inline-block;
+    text-align: center;
+    width: 60px;
+    height: 20px;
+    cursor: pointer;
+    margin-left: 5vw;
+}
+.cmt-button:hover {
+    background-color: var(--gray-two);
+    border-radius: 15px;
+    color: var(--blue);
+    transition: color 180ms ease-out;
+}
+.cmt-button span{
+    font-size: 18px;
+}
+.cmt-reaction-count {
     font-size: 15px;
     padding-left: 5px;
     position: relative;
     bottom: 4px;
 }
+
 
 

@@ -22,65 +22,103 @@
         <span class="material-icons-outlined">person_outline</span>
         <h5>Profile</h5>
     </div>
-    <button class="tweet-button">Tweet</button>
+    <button class="tweet-button" onclick="window.location='{% url 'create-tweet' %}'">Tweet</button>
 </div>
 <!--sidebar ends-->
 <div class="feed-area">
     <div class="home-header">
         <span class="material-icons-outlined back-button">arrow_back</span>
         <div class="profile-head">
-            Andreas Kling
+            {{user.first_name}}
         </div>
     </div>
     <div class="profile">
         <div class="cover-img"><img src="{% static 'media/profiles/default.png'%}" width="120" height="120"></div>
-        <div class="name-and-buttons">
-            <div class="profile-name">
-                <div class="profile-display-name">Andreas Kling</div>
-                <div class="username">@andreaskling</div>
+        <div class="profile-data">
+            <div class="name-and-buttons">
+                <div class="profile-name">
+                    <div class="profile-display-name">{{user.first_name}}</div>
+                    <div class="username">@{{user.username}}</div>
+                </div>
+                <div class="profile-buttons">
+                    <button class="follow-button">
+                        {% if followed_by_current_user %}
+                            Unfollow
+                        {% else %}
+                            Follow
+                        {% endif %}
+                    </button>
+                </div>
             </div>
-            <div class="profile-buttons">
-                <button class="follow-button">Follow</button>
+            <div class="bio">
+                <div>{{user.bio}}</div>
+            <div>
+                <span class="material-icons-outlined" class="username" 
+                style="font-size: 18px; padding-top: 5px;">calendar_today</span>
+                <span class="username">Joined {{user.date_joined|date:"F Y"}}</span>
+            </div>
+        
             </div>
         </div>
     </div>
     <div class="tabs">
-        <div class="tab-item active">Tweets & replies</div>
-        <div class="tab-item">Likes</div>
+        <div onclick="" class="tab-item active">Tweets & replies</div>
+        <div onclick="window.location='{% url 'profile-likes' user.username %}';"  class="tab-item">Likes</div>
     </div>
     <div class="feed">
-
-        <div class="post-container">
-            <div class="post-profilediv">
-                <img src="{% static 'media/profiles/default.png'%}" width="45" height="45">
+        {% for post in posts %}    
+            <div onclick="window.location='{% url 'tweet-detail' username=user.username id=post.id %}'" class="post-container">
+                <div class="post-profile-div">
+                    <img src="{% static 'media/profiles/default.png'%}" width="45" height="45">
+                </div>
+                <div class="post-body">
+                    <div class="post-head">
+                        <span class="post-author">{{user.first_name}}</span>
+                        <span class="grayed-text">&nbsp;@{{user.username}}</span>
+                        <span class="grayed-text">&nbsp;·&nbsp;{{post.timestamp|timesince}}</span>
+                    </div>
+                    <div class="post-text">
+                        {{post.obj.content}}
+                    </div>
+                    <div class="post-reaction">
+                        <div class="post-button" onclick="">
+                            <span class="material-icons-outlined">mode_comment</span>
+                            <a class="reaction-count">1</a>
+                        </div>
+                        <div class="post-button" onclick="like_post(this, {{post.is_liked}})">
+                            <span class="material-icons-outlined">repeat</span>
+                            <a class="reaction-count">12</a>
+                        </div>
+                        <div class="post-button" onclick="retweet_post(this, {{post.is_retweeted}})">
+                            <span class="material-icons-outlined">favorite_border</span>
+                            <a class="reaction-count">95</a>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="post-body">
-                <div class="post-head">
-                    <span class="post-author">Andreas Kling</span>
-                    <span class="username">&nbsp;@andreaskling</span>
-                    <span class="post-age">·12h</span>
-                </div>
-                <div class="post-text">
-                    After implementing some parts of it I can confidently say: the Temporal ECMAScript proposal is
-                    fantastic. Can't wait for it to be finalized and ship in all the major browsers!
-                </div>
-                <div class="post-reaction">
-                    <div class="post-button">
-                        <span class="material-icons-outlined">mode_comment</span>
-                        <a class="reaction-count">1</a>
-                    </div>
-                    <div class="post-button">
-                        <span class="material-icons-outlined">repeat</span>
-                        <a class="reaction-count">12</a>
-                    </div>
-                    <div class="post-button"><span class="material-icons-outlined">favorite_border</span>
-                        <a class="reaction-count">95</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-
+        {% endfor %}
     </div>
 </div>
 
 {% endblock %}
+
+
+<script>
+const like_post = (elem, status) => {
+    if(status==true) {
+        console.log("liking the post")
+    }
+    else {
+        console.log("unliking the post")
+    }
+
+}
+
+const retweet_post = (elem, status) => {
+    if(status==true) {
+        console.log("rt-ing the post")
+    }
+    else {
+        console.log("un-rt-ing the post")
+    }
+</script>
