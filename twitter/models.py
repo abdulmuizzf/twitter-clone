@@ -1,7 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.utils.translation import gettext_lazy as _
-from django.utils import timezone
 
 from .validators import UsernameValidator
 
@@ -26,21 +25,22 @@ class User(AbstractUser):
 class Post(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     content = models.CharField(max_length=280)
-    timestamp = models.DateTimeField(default=timezone.now)
+    timestamp = models.DateTimeField(auto_now_add=True)
     post_type = models.CharField(max_length=10, choices=[("O","Original"),("C","Comment")], default="O")
-    parent_post = models.ForeignKey('Post', null=True, on_delete=models.CASCADE, related_name="comment")
+    parent_post = models.ForeignKey('Post', null=True, on_delete=models.CASCADE, related_name="comments")
+    first_child = models.BooleanField(default=False)
 
 
 class Like(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="likes")
     class Meta:
         unique_together = ('user', 'post',)
 
 
 class Retweet(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="retweets")
     class Meta:
         unique_together = ('user', 'post',)
 
@@ -54,6 +54,7 @@ class Feed(models.Model):
     activity_type = models.CharField(max_length=2, choices=[("TW","Tweet"),("RT","Retweet"),("CM","Comment")])
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
     publisher = models.ForeignKey(User, on_delete=models.CASCADE, related_name="activity")
+    timestamp = models.DateTimeField(auto_now_add=True)
 
 
 class Config(models.Model):
