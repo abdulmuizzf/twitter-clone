@@ -1,0 +1,50 @@
+{% extends 'twitter/base.html' %}
+{% load static %}
+
+{% block head %}
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined" rel="stylesheet">
+<link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css"
+    integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous" />
+<link rel="stylesheet" href="{% static 'twitter/tweet.css' %}">
+<title>Home - Twitter</title>
+{% endblock %}
+<!-- style="background-color: #cccccc"-->
+{% block content %}
+
+<!--sidebar begins-->
+<div class="sidebar">
+    <i class="fab fa-twitter-square"
+        onclick="window.location='{% url 'home' %}'"></i>
+    <div class="sidebar-item"
+            onclick="window.location='{% url 'home' %}'">
+        <span class="material-icons-outlined">home</span>
+        <h5>Home</h5>
+    </div>
+    <div class="sidebar-item"
+        onclick="window.location='{% url 'profile-tweets' user %}'">
+        <span class="material-icons-outlined">person_outline</span>
+        <h5>Profile</h5>
+    </div>
+    <button class="tweet-button"
+        onclick="window.location='{% url 'create-tweet' %}'">{{title}}</button>
+</div>
+<!--sidebar ends-->
+<div class="feed-area">
+    <div class="home-header">
+        <span class="material-icons-outlined back-button"
+            onclick="window.history.back()">arrow_back</span>
+        <div class="tweet-head">
+            Tweet
+        </div>
+    </div>
+
+    <div class="post-container grayed-text" style="text-align: center;">
+        {{display_text}}
+    </div>
+
+    <div class="feed">
+        
+    </div>
+</div>
+
+{% endblock %}

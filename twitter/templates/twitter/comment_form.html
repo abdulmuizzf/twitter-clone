@@ -1,0 +1,61 @@
+{% extends 'twitter/base.html' %}
+{% load static %}
+
+{% block head %}
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined" rel="stylesheet">
+<link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css"
+    integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous" />
+<link rel="stylesheet" href="{% static 'twitter/comment_form.css' %}">
+<title>Home - Twitter</title>
+{% endblock %}
+<!-- style="background-color: #cccccc"-->
+{% block content %}
+
+<div class="form-container">
+    <div class="form-outer">
+        <div class="home-header">
+            <span class="material-icons-outlined back-button"
+                  onclick="window.history.back()">arrow_back</span>
+        </div>
+        <div class="post-container">
+            <div class="post-profile-div">
+                <img src="{% static 'media/profiles/default.png'%}" width="45" height="45">
+            </div>
+            <div class="post-body">
+                <div class="post-head">
+                    <span class="post-author">{{parent_post.author.first_name}}</span>
+                    <span class="grayed-text">&nbsp;@{{parent_post.author.username}}</span>
+                    <span class="grayed-text">&nbsp;·&nbsp;{{parent_post.timestamp|timesince}}</span>
+                </div>
+                <div class="post-text">
+                    {{parent_post.content}}
+                </div>
+                {% if replying_to_other %}
+                    <div class="replying-to">
+                        <span class="grayed-text">Replying to <span class="grayed-text"></span>@{{parent_post.author.username}}</span>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        <div class="tweet-area">
+            <div class="profile-pic">
+                <img src="{% static 'media/profiles/default.png'%}" width="45" height="45">
+            </div>
+            <div class="tweet-box">
+                <form method="post">
+                    {% csrf_token %}
+                    <textarea name="content" class="tweet-input" maxlength="280" placeholder="{{placeholder}}"></textarea>
+                    <div class="tweet-control">
+                        <input type="submit" value="Tweet" class="tweet-button"></input>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+<script>
+
+</script>
