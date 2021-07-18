@@ -1,5 +1,6 @@
 {% extends 'twitter/base.html' %}
 {% load static %}
+{% load filters %}
 
 {% block head %}
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined" rel="stylesheet">
@@ -13,21 +14,22 @@
 
 <!--sidebar begins-->
 <div class="sidebar">
-    <i class="fab fa-twitter-square"></i>
-    <div class="sidebar-item">
+    <i class="fab fa-twitter-square" onclick="window.location='{% url 'home' %}'"></i>
+    <div class="sidebar-item" onclick="window.location='{% url 'home' %}'">
         <span class="material-icons-outlined">home</span>
         <h5>Home</h5>
     </div>
-    <div class="sidebar-item">
+    <div class="sidebar-item"
+        onclick="window.location='{% url 'profile-tweets' user.username %}'">
         <span class="material-icons-outlined">person_outline</span>
         <h5>Profile</h5>
     </div>
-    <button class="tweet-button">Tweet</button>
+    <button class="tweet-button" onclick="window.location='{% url 'create-tweet' %}'">Tweet</button>
 </div>
 <!--sidebar ends-->
 <div class="feed-area">
     <div class="home-header">
-        <span class="material-icons-outlined back-button">arrow_back</span>
+        <span class="material-icons-outlined back-button" onclick="window.history.back()">arrow_back</span>
         <div class="tweet-head">
             Tweet
         </div>
@@ -39,30 +41,53 @@
                 <img src="{% static 'media/profiles/default.png'%}" width="45" height="45">
             </div>
 
-            <div class="post-head">
-                <div class="post-author">{{tweet.author.first_name}}</div>
-                <div class="grayed-text">@{{{{tweet.author.username}}</div>
+            <div class="post-head-container">
+                <div class="post-head">
+                    <div class="post-author">{{tweet.obj.author.first_name}}</div>
+                    <div class="grayed-text">@{{tweet.obj.author.username}}</div>
+                </div>
+
+                    {% if user.id == tweet.obj.author.id %}
+                    <div class="menu"
+                        onclick="dropdown(event)">
+                        <span class="material-icons-outlined">more_horiz</span>
+                    </div>
+                    <div class="dropdown-content">
+                        <div id="dropdown-item" class="dropdown-item"
+                            onclick="popup(event,this,'{{tweet.obj.id}}');" >
+                            <span class="material-icons-outlined">
+                                delete
+                            </span>
+                            <span class="dropdown-text">Delete</span>
+                        </div>
+                    </div>
+                    
+                    {% endif %}
             </div>
         </div>
         <div class="post-body">
             <div class="post-text">
-                {{tweet.content}}
+                {{tweet.obj.content}}
             </div>
             <div class="post-age">
-                {{Time}}&nbsp;·&nbsp;{{Date}}
+                {{tweet.obj.timestamp|date:"g:i A"}}&nbsp;·&nbsp;{{tweet.obj.timestamp|date:"M n, Y"}}
             </div>
         </div>
         <div class="post-reaction">
-            <div class="post-button">
+            <div class="post-button"
+                onclick="window.location='{% url 'comment' tweet.obj.author.username tweet.obj.id %}';">
                 <span class="material-icons-outlined">mode_comment</span>
-                <a class="post-reaction-count">{{tweet.comments.count}}</a>
+                <a class="post-reaction-count">{% if tweet.cmt_count != 0 %} {{tweet.cmt_count}} {% endif %}</a>
             </div>
-            <div class="post-button">
+            <div class="post-button {% if tweet.rtd_by_me %} retweeted {% endif %}"
+                onclick="retweet_post(event, this, '{% url 'retweet' tweet.obj.id %}')">
                 <span class="material-icons-outlined">repeat</span>
-                <a class="post-reaction-count">{{tweet.retweets.count}}</a>
+                <a class="post-reaction-count">{% if tweet.rt_count != 0 %} {{tweet.rt_count}} {% endif %}</a>
             </div>
-            <div class="post-button"><span class="material-icons-outlined">favorite_border</span>
-                <a class="post-reaction-count">{{tweet.likes.count}}</a>
+            <div class="post-button {% if tweet.liked_by_me %} liked {% endif %}"
+                onclick="like_post(event, this, '{% url 'like' tweet.obj.id %}')">
+                <span class="material-icons-outlined">favorite_border</span>
+                <a class="post-reaction-count">{% if tweet.like_count != 0 %} {{tweet.like_count}} {% endif %}</a>
             </div>
         </div>
     </div>
@@ -70,44 +95,154 @@
 
 
     <div class="feed">
-        {% for bundle in comments %}
-            <div class="cmt-bundle">
-                {% for comment in bundle %}
-                    
-                    <div class="cmt-container">
-                        <div class="cmt-profile-div">
-                            <img src="{% static 'media/profiles/default.png'%}" width="45" height="45">
+        {% for thread in threads %}
+        <div class="cmt-thread">
+            {% for comment in thread %}
+
+            <div class="cmt-container" onclick="window.location='{% url 'tweet-detail' comment.obj.id';">
+                <div class="cmt-profile-div">
+                    <img src="{% static 'media/profiles/default.png'%}" width="45" height="45">
+                </div>
+                <div class="cmt-body">
+                    <div class="cmt-head">
+                        <span class="cmt-author">{{comment.obj.author.first_name}}</span>
+                        <span
+                            class="grayed-text">&nbsp;@{{comment.obj.author.username}}&nbsp;·&nbsp;{{comment.obj.timestamp|timesince|msu}}</span>
+                    </div>
+                    <div class="cmt-text">
+                        {{comment.obj.content}}
+                    </div>
+                    <div class="cmt-reaction">
+                        <div class="cmt-button">
+                            <span class="material-icons-outlined">mode_comment</span>
+                            <a class="cmt-reaction-count">{{comment.obj.cmt_count}}</a>
                         </div>
-                        <div class="cmt-body">
-                            <div class="cmt-head">
-                                <span class="cmt-author">{{comment.author.first_name}}</span>
-                                <span class="grayed-text">&nbsp;@{{comment.author.username}}&nbsp;·&nbsp;{{12h}}</span>
-                            </div>
-                            <div class="cmt-text">
-                                {{comment.content}}
-                            </div>
-                            <div class="cmt-reaction">
-                                <div class="cmt-button">
-                                    <span class="material-icons-outlined">mode_comment</span>
-                                    <a class="cmt-reaction-count">{{comment.comments.count}}</a>
-                                </div>
-                                <div class="cmt-button">
-                                    <span class="material-icons-outlined">repeat</span>
-                                    <a class="cmt-reaction-count">{{comment.retweets.count}}</a>
-                                </div>
-                                <div class="cmt-button">
-                                    <span class="material-icons-outlined">favorite_border</span>
-                                    <a class="cmt-reaction-count">{{comment.likes.count}}</a>
-                                </div>
-                            </div>
+                        <div class="cmt-button">
+                            <span class="material-icons-outlined">repeat</span>
+                            <a class="cmt-reaction-count">{{comment.obj.rt_count}}</a>
+                        </div>
+                        <div class="cmt-button">
+                            <span class="material-icons-outlined">favorite_border</span>
+                            <a class="cmt-reaction-count">{{comment.obj.like_count}}</a>
                         </div>
                     </div>
-                {% endfor %}
+                </div>
             </div>
+            {% endfor %}
+        </div>
         {% endfor %}
 
         <div style="height:15px;"></div>
     </div>
 </div>
+
+<div class="popup-content">
+    <div class="popup-text">
+        Confirm Delete?
+    </div>
+    <div class="popup-button-div">
+        <button class="popup-button">No</button>
+        <button class="popup-button dark">Yes</button>
+    </div>
+</div>
+
+<script>
+
+    const popup = (a,b,c) => {
+        var result = confirm("Want to delete?");
+        if (result) {
+            console.log("Deletion")
+        }
+    }
+    const dropdown = (event) => {
+        dropdown_element = document.getElementById("dropdown-item");
+        dropdown_element.classList.toggle("show");
+        event.stopPropagation();
+        event.preventDefault();
+        console.log("here")
+    }
+
+    window.onclick = function(event) {
+        if (!event.target.matches('.dropdown-item')) {
+            console.log("there")
+            var dropdown_element = document.getElementById("dropdown-item");
+            if (dropdown_element.classList.contains('show')) {
+                dropdown_element.classList.remove('show');
+            }
+        }
+    } 
+
+    const check_zero = (str) => {
+        if (str == '0')
+            str = '';
+        return str;
+    }
+    const check_empty = (str) => {
+        if (str == '')
+            str = '0';
+        return str;
+    }
+
+    const like_post = async (event, elem, url) => {
+        liked = elem.classList.contains("liked");
+        like_text = elem.children[1].textContent
+        event.stopPropagation();
+        event.preventDefault();
+
+        if (liked) {
+            likes = check_zero(parseInt(like_text) - 1);      // undo retweet
+        } else {
+            likes = parseInt(check_empty(like_text)) + 1;       // retweet
+        }
+        elem.children[1].textContent = likes
+        elem.classList.toggle("liked");
+
+        await axios.post(url, {
+            'value': (liked ? -1 : 1),
+        })
+            .then((res) => {
+                if (res['likes'] == 0) {             // Retweet unsuccessful, undo element change
+                    if (liked) {
+                        likes += 1;
+                    } else {
+                        likes -= 1;
+                    }
+                    elem.children[1].textContent = likes
+                    elem.classList.toggle("liked");
+                }
+            });
+    }
+
+    const retweet_post = async (event, elem, url) => {
+        retweeted = elem.classList.contains("retweeted");
+        rt_text = elem.children[1].textContent
+        event.stopPropagation();
+        event.preventDefault();
+
+        if (retweeted) {
+            retweets = check_zero(parseInt(rt_text) - 1);      // undo retweet
+        } else {
+            retweets = parseInt(check_empty(rt_text)) + 1;       // retweet
+        }
+        elem.children[1].textContent = retweets
+        elem.classList.toggle("retweeted");
+
+        await axios.post(url, {
+            'value': 1
+        })
+            .then((res) => {
+                if (res['retweets'] == 0) {             // Retweet unsuccessful, undo element change
+                    if (retweeted) {
+                        retweets += 1;
+                    } else {
+                        retweets -= 1;
+                    }
+                    elem.children[1].textContent = retweets
+                    elem.classList.toggle("retweeted");
+                }
+            });
+    }
+
+</script>
 
 {% endblock %}

@@ -110,3 +110,43 @@ body {
     background-color: var(--dark-blue);
 }
 
+
+/***********************************************************************************************/
+/* For parent post in Comment Form */
+
+.post-container{
+    display: flex;
+    border: 1px solid var(--gray-two);
+    border-bottom: none;
+    cursor: pointer;
+    background-color: white;
+}
+.post-profile-div {
+    width: 45px;
+    margin: 10px;
+}
+.post-profile-div img{
+    background-color: white;
+    border-radius: 15px;
+    object-fit: cover;
+}
+.post-body {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    margin-right: 10px;
+    cursor: pointer;
+}
+.post-author {
+    font-weight: 600;
+    font-size: 15px;
+}
+.grayed-text {
+    font-size: 15px;
+    color: var(--gray-four);
+}
+.post-text {
+    font-size: 15px;
+}
+.replying-to {
+    margin-top: 10px;
+}

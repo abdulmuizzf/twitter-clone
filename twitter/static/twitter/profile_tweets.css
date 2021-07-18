@@ -8,7 +8,9 @@ body {
     --light-blue: #b9e1fa;
     --blue: #50b7f5;
     --dark-blue: #45a6e4;
+    --highlight-blue: #9dd2f3;
     --gray-one: #F5F8FA;
+    --gray-highlight: #EEEFF0;
     --gray-two: #E1E8ED;
     --gray-three: #AAB8C2;
     --gray-four: #657786;
@@ -93,11 +95,12 @@ body {
     width: 50%;
     max-width: 50%;
     border: 1px solid var(--gray-two);
+    border-bottom: none;
+    overflow: auto;
 }
 .home-header {
     display: flex;
     margin-top: 10px;
-    cursor: pointer;
     border-bottom: 1px solid var(--gray-two);
     padding-top: 5px;
 }
@@ -153,6 +156,12 @@ body {
 .bio {
     font-size: 15px;
 }
+.username {
+    font-size: 15px;
+    color: var(--gray-four);
+    position: relative;
+    bottom: 2px;
+}
 
 .follow-button {
     width: 100px;
@@ -184,7 +193,7 @@ body {
     cursor: pointer;
 }
 .tab-item:hover{
-    background-color: var(--light-blue);
+    background-color: var(--gray-two);
 }
 .tab-item.active {
     color: var(--blue);
@@ -200,7 +209,7 @@ body {
     cursor: pointer;
 }
 .post-container:hover{
-    background-color: var(--gray-two);
+    background-color: var(--gray-highlight);
 }
 
 .post-profile-div {
@@ -236,25 +245,33 @@ body {
     display: inline-block;
     text-align: center;
     width: 60px;
-    height: 20px;
+    height: 25px;
     cursor: pointer;
     margin-left: 5vw;
 }
 .post-button:hover {
     background-color: var(--gray-two);
     border-radius: 15px;
-    color: var(--blue);
     transition: color 180ms ease-out;
+}
+.liked{
+    color: var(--blue);
+}
+.retweeted{
+    color: var(--blue);
 }
 .post-button span{
     font-size: 18px;
+    position: relative;
+    top: 3px;
 }
 .reaction-count {
     font-size: 15px;
     padding-left: 5px;
     position: relative;
-    bottom: 4px;
+    bottom: 1px;
 }
+
 
 
 

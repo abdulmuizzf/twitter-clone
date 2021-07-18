@@ -5,20 +5,24 @@
 }
 
 body {
+    --light-blue: #b9e1fa;
     --blue: #50b7f5;
     --bg-blue: #81b6d6;
     --dark-blue: #45a6e4;
     --gray-one: #F5F8FA;
+    --gray-highlight: #EEEFF0;
     --gray-two: #E1E8ED;
     --gray-three: #AAB8C2;
     --gray-four: #657786;
     --black: #14171A;
 
     display: flex;
+    position: relative;
     height: 100%;
     max-width: 1200px;
     margin: auto;
     padding: 0 10px;
+    z-index: 1;
 }
 
 .sidebar {
@@ -28,6 +32,7 @@ body {
     min-width: 250px;
     padding-left: 20px;
     padding-right: 20px;
+    z-index: 1;
   }
 
 .sidebar-item {
@@ -92,12 +97,14 @@ body {
     width: 50%;
     max-width: 50%;
     border-right: 1px solid var(--gray-two);
+    border-bottom: none;
+    overflow: auto;
+    z-index: 1;
 }
 
 .home-header {
     display: flex;
     margin-top: 10px;
-    cursor: pointer;
     border-bottom: 1px solid var(--gray-two);
     padding-top: 5px;
 }
@@ -124,7 +131,7 @@ body {
     height: 20px;
 }
 .post-container{
-    border: 1px solid var(--gray-two);
+    border: 1px solid var(--gray-highlight);
     padding: 16px;
 }
 .post-profile-div {
@@ -135,9 +142,100 @@ body {
     height: 45px;
     margin: 10px;
 }
+.post-head-container{
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    position: relative;
+}
 .post-head{
     padding-left: 10px;
+    display: inline-block;
 }
+/************************************************************************/
+.menu-container {
+    position: absolute;
+    right: 5px;
+    top: 5px;
+}
+.menu {
+    position: absolute;
+    right: 5px;
+    top: 5px;
+    width: 30px;
+    height: 30px;
+    border-radius: 15px;
+    display: inline-block;
+}
+.menu:hover{
+    cursor: pointer;
+    background-color: var(--gray-two);
+}
+.menu span{
+    color: var(--gray-three);
+    width: 22px;
+    position: relative;
+    top: 3px;
+    left: 3px;
+}
+.menu span:hover{
+    color: var(--blue);
+}
+.dropdown-content {
+    position: absolute;
+    right: 5px;
+    top: 6px;
+    background-color: var(--gray-one);
+    min-width: 120px;
+    box-shadow: 0px 0px 5px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+.dropdown-content span{
+    color: rgb(161, 61, 61);
+    padding: 5px;
+}
+.dropdown-item {
+    display: none;
+    color: white;
+}
+.dropdown-item:hover {
+    background-color: var(--gray-two);
+}
+.dropdown-text{
+    position: relative;
+    bottom: 6px;
+    right: 10px;
+} 
+.show {display:block;}
+
+.popup-content-div {
+    position: absolute;
+    display: block;
+    background-color: white;
+    width: 300px;
+    height: 100px;
+    top: 200px;
+    left: 400px;
+    z-index: 10;
+}
+.popup-text {
+    font-size: 25px;
+    color: black;
+    display: block;
+    background-color: white;
+}
+.popup-buttons {
+    display: block;
+    color: black;
+    background-color: var(--gray-one);
+}
+.dark {
+    color: white;
+    background-color: var(--gray-four)
+}
+
+
+/***************************************************************************************/
 .post-profile-div img{
     background-color: var(--gray-one);
     border-radius: 15px;
@@ -163,10 +261,12 @@ body {
     color: var(--gray-four);
     padding-top: 5px;
     padding-bottom: 5px;
+    font-size: 15px;
 }
 .post-reaction{
     border-top: 1px solid var(--gray-two);
-    padding-top: 15px;
+    height: 40px;
+    padding-top: 10px;
 }
 .post-button {
     display: inline-block;
@@ -184,14 +284,20 @@ body {
 }
 .post-button span{
     font-size: 18px;
+    position: relative;
+    top: 6px;
 }
 .post-reaction-count {
     font-size: 15px;
     padding-left: 5px;
-}
-.post-button span {
     position: relative;
-    top: 4px;
+    top: 2px;
+}
+.liked{
+    color: var(--blue);
+}
+.retweeted{
+    color: var(--blue);
 }
 
 
@@ -199,7 +305,7 @@ body {
 /**********************************************************************************/
 /* For post replies */
 
-.cmt-bundle{
+.cmt-thread{
     border: 1px solid var(--gray-two);
 }
 .cmt-container{
