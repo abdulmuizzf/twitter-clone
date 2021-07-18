@@ -5,10 +5,12 @@
 }
 
 body {
+    --light-blue: #b9e1fa;
     --blue: #50b7f5;
     --bg-blue: #81b6d6;
     --dark-blue: #45a6e4;
     --gray-one: #F5F8FA;
+    --gray-highlight: #EEEFF0;
     --gray-two: #E1E8ED;
     --gray-three: #AAB8C2;
     --gray-four: #657786;
@@ -92,11 +94,11 @@ body {
     width: 50%;
     max-width: 50%;
     border-right: 1px solid var(--gray-two);
+    border-bottom: none;
 }
 .home-header {
     padding: 10px;
     border-bottom: 1px solid var(--gray-two);
-    cursor: pointer;
 }
 .home-header h5{
 font-weight: 500;
@@ -113,7 +115,7 @@ padding-top: 5px;
     cursor: pointer;
 }
 .post-container:hover{
-    background-color: var(--gray-two);
+    background-color: var(--gray-highlight);
 }
 
 .post-profile-div {

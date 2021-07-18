@@ -1,5 +1,6 @@
 {% extends 'twitter/base.html' %}
 {% load static %}
+{% load filters %}
 
 {% block head %}
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined" rel="stylesheet">
@@ -13,16 +14,21 @@
 
 <!--sidebar begins-->
 <div class="sidebar">
-    <i class="fab fa-twitter-square"></i>
+    <i class="fab fa-twitter-square"
+        onclick="window.location='{% url 'home' %}'"></i>
     <div class="sidebar-item active">
         <span class="material-icons-outlined">home</span>
         <h5>Home</h5>
     </div>
-    <div class="sidebar-item">
+    <div class="sidebar-item"
+        onclick="window.location='{% url 'profile-tweets' user %}'">
         <span class="material-icons-outlined">person_outline</span>
         <h5>Profile</h5>
     </div>
-    <button class="tweet-button">Tweet</button>
+    <button class="tweet-button"
+    onclick="window.location='{% url 'create-tweet' %}'">
+            Tweet
+    </button>
 </div>
 <!--sidebar ends-->
 <div class="feed-area">
@@ -38,24 +44,28 @@
             </div>
             <div class="post-body">
                 <div class="post-head">
-                    <span class="post-author">{{post.author}}</span>
-                    <span class="grayed-text">&nbsp;@{{post.author.username}}</span>
-                    <span class="grayed-text">&nbsp;·&nbsp;12h</span>
+                    <span class="post-author">{{post.obj.author}}</span>
+                    <span class="grayed-text">&nbsp;@{{post.obj.author.username}}</span>
+                    <span class="grayed-text">&nbsp;·&nbsp;{{post.obj.timestamp|timesince|msu}}</span>
                 </div>
                 <div class="post-text">
                     {{post.content}}
                 </div>
                 <div class="post-reaction">
-                    <div class="post-button">
+                    <div class="post-button" 
+                        onclick="window.location='{% url 'comment' post.obj.author.username post.obj.id %}';">
                         <span class="material-icons-outlined">mode_comment</span>
-                        <a class="reaction-count">1</a>
+                        <a class="reaction-count">{% if post.cmt_count != 0 %} {{post.cmt_count}} {% endif %}</a>
                     </div>
-                    <div class="post-button">
+                    <div class="post-button {% if post.rtd_by_me %} retweeted {% endif %}"
+                        onclick="retweet_post(event, this, '{% url 'retweet' post.obj.id %}')">
                         <span class="material-icons-outlined">repeat</span>
-                        <a class="reaction-count">12</a>
+                        <a class="reaction-count">{% if post.rt_count != 0 %} {{post.rt_count}} {% endif %}</a>
                     </div>
-                    <div class="post-button"><span class="material-icons-outlined">favorite_border</span>
-                        <a class="reaction-count">95</a>
+                    <div class="post-button {% if post.liked_by_me %} liked {% endif %}"
+                        onclick="like_post(event, this, '{% url 'like' post.obj.id %}')">
+                        <span class="material-icons-outlined">favorite_border</span>
+                        <a class="reaction-count">{% if post.like_count != 0 %} {{post.like_count}} {% endif %}</a>
                     </div>
                 </div>
             </div>
@@ -65,4 +75,77 @@
     </div>
 </div>
 
-{% endblock %}
+<script>
+
+    const check_zero = (str) => {
+        if(str == '0')
+            str = '';
+        return str;
+    }
+    const check_empty = (str) => {
+        if (str == '')
+            str = '0';
+        return str;
+    }
+    
+    const like_post = async (event, elem, url) => {
+        liked = elem.classList.contains("liked");
+        like_text = elem.children[1].textContent
+    
+        if (liked){
+            likes = check_zero(parseInt(like_text) - 1);      // undo retweet
+        } else {
+            likes = parseInt(check_empty(like_text)) + 1;       // retweet
+        }
+        elem.children[1].textContent = likes
+        elem.classList.toggle("liked");
+    
+        await axios.post(url,{
+                            'value': 1
+                            })
+                    .then((res) => {
+                        if(res['likes'] == 0){             // Retweet unsuccessful, undo element change
+                            if(liked){
+                                likes += 1;
+                            } else {
+                                likes -= 1;
+                            }
+                            elem.children[1].textContent = likes
+                            elem.classList.toggle("liked");
+                        }
+                    });
+        event.stopPropagation();
+    }
+    
+    const retweet_post = async (event, elem, url) => {
+        retweeted = elem.classList.contains("retweeted");
+        rt_text = elem.children[1].textContent
+    
+        if (retweeted){
+            retweets = check_zero(parseInt(rt_text) - 1);      // undo retweet
+        } else {
+            retweets = parseInt(check_empty(rt_text)) + 1;       // retweet
+        }
+        elem.children[1].textContent = retweets
+        elem.classList.toggle("retweeted");
+    
+        await axios.post(url,{
+                            'value': 1
+                            })
+                    .then((res) => {
+                        if(res['retweets'] == 0){             // Retweet unsuccessful, undo element change
+                            if(retweeted){
+                                retweets += 1;
+                            } else {
+                                retweets -= 1;
+                            }
+                            elem.children[1].textContent = retweets
+                            elem.classList.toggle("retweeted");
+                        }
+                    });
+        event.stopPropagation();
+    }
+    
+    </script>
+    
+    {% endblock %}
