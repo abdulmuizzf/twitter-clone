@@ -107,7 +107,7 @@ ROOT_URLCONF = 'config.urls'
 
 #STATIC_URL = '/static/'
 
-STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
+STATICFILES_DIRS = [os.path.join(BASE_DIR, "twitter/static")]
 
 # SECRET_KEY = 'django-insecure-7t3x77+uksnch+^%rb@16c7$edrl)dka=%$1pq3en9gh_86*2f'
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'cg#p$g+j9tax!#a3cup@1$8obt2_+&k3q+pmu)5%asj6yjpkag')
@@ -152,7 +152,7 @@ DATABASES['default'].update(db_from_env)
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 # The URL to use when referring to static files (where they will be served from)
-STATIC_URL = '/static/'
+STATIC_URL = '/twitter/static/'
 
 # Simplified static file serving.
 # https://warehouse.python.org/project/whitenoise/
