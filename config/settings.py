@@ -13,7 +13,8 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 import os
 from pathlib import Path
 
-ALLOWED_HOSTS = ['twitter-sawo.herokuapp.com']
+ALLOWED_HOSTS = ['twitter-sawo.herokuapp.com',
+                 'websdk.sawolabs.com']
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
