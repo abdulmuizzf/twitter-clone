@@ -28,7 +28,7 @@ class Post(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
     post_type = models.CharField(max_length=10, choices=[("O","Original"),("C","Comment")], default="O")
     parent_post = models.ForeignKey('Post', null=True, on_delete=models.CASCADE, related_name="comments")
-    first_child = models.BooleanField(default=False)
+    is_first_child = models.BooleanField(default=False)
 
 
 class Like(models.Model):
