@@ -2,23 +2,19 @@
 import json
 
 from django.db import IntegrityError
-from django.contrib import auth
 from django.http.response import HttpResponseNotAllowed
 from django.shortcuts import render
 from django.utils import timezone
-from django.urls import reverse, reverse_lazy
-from django.http import HttpResponse, HttpResponseRedirect, HttpResponsePermanentRedirect, JsonResponse, request
-from django.views import generic
+from django.urls import reverse
+from django.http import HttpResponse, HttpResponseRedirect, HttpResponsePermanentRedirect, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from django.utils.dateformat import DateFormat
 from django.contrib.auth import authenticate, login as session_login, logout as session_logout
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 
 from .models import User, Post, Like, Retweet, Feed, Config
 from .forms import SignupForm
 from .utils import (
-    create_new_user, bulk_insert_feed, tweet_thread, 
+    create_new_user, bulk_insert_feed, delete_signup_info, tweet_thread, 
     update_signup_info, signup_info, missing_page,
                     )
 
@@ -67,9 +63,13 @@ def login(request):
             assert payload.get('identifier','')
             email = payload['identifier']
 
-            new_user = request.session.get('username', None)        # Request coming from Sign Up view
-            if new_user:
-                create_new_user(request, email)
+            new_user = request.session.get('username', None)        # Request coming from new user 
+            if new_user:                                            # through signup() view
+                if not User.objects.filter(email=email).exists():
+                    create_new_user(request, email)
+                    delete_signup_info(request.session)
+                else:
+                    return HttpResponse(status=409, content=json.dumps({'message':'Email already in use'}))
 
             user = authenticate(request, email=email)
             if user:
@@ -77,17 +77,20 @@ def login(request):
                 redirect_url = request.GET.get('next','/home/')
                 return JsonResponse({'redirect': redirect_url})
             else:
-                return HttpResponse('Unauthorised', status=401)
+                return HttpResponse(status=401, content=json.dumps({'message':'Email is not registered'}))
             
         else:
-            return HttpResponse('Unauthorised', status=401)
+            return HttpResponse(status=401, content=json.dumps({'message':'Authentication failed'}))
 
     return HttpResponseNotAllowed(['GET', 'POST'])
 
 @login_required
 def logout(request):
-    session_logout(request)
-    return HttpResponsePermanentRedirect(reverse('index'))
+    if request.method == 'POST':
+        session_logout(request)
+        return HttpResponsePermanentRedirect(reverse('index'))
+    
+    return HttpResponseNotAllowed(['POST'])
 
 @login_required
 def tweet_detail(request, username, id):
@@ -102,7 +105,6 @@ def tweet_detail(request, username, id):
                         for comment in comments]      
                                                     # `tweet_thread` finds the chain of first-level comments
                                                     #  under each tweet (i.e a twitter comment thread)
-        print(f"Feed finally: \n {threads}")
         context = {                                                     
             'tweet': {
                 'obj': tweet,
@@ -129,24 +131,23 @@ def profile_tweets(request, username):
         except User.DoesNotExist:
             return missing_page(request, type_='User')
 
-        offset = request.GET.get('offset', default=0)
-        limit = request.GET.get('offset', default=19)
-        top_tweets = Post.objects.filter(author__username=username)    \
-                                .order_by('-timestamp')[offset:limit+1]
-        post_data = [{'obj'     : post,
-                    'liked_by_me'  : True if Like.objects.filter(user__id=user.id, post__id=post.id).exists()
-                                        else False,
-                    'rtd_by_me'    : True if Retweet.objects.filter(user__id=user.id, post__id=post.id).exists()
-                                        else False,
-                    'like_count': post.likes.count(),
-                    'rt_count'  : post.retweets.count(),
-                    'cmt_count' : post.comments.count(),
-                    'age' : int((post.timestamp - timezone.now()).seconds/3600)
-                        } for post in top_tweets]
+        page_num = 1
+        page_size = 20
+        offset = (page_num / page_size)
+        posts = Feed.objects.filter(publisher__id=user.id, subscriber__id=user.id)   \
+                            .order_by('-timestamp')[offset : offset+page_size]
         context = {
             'user': user,
-            'post_data': post_data,
-            'followed_by_current_user': request.user.followers.filter(id=user.id).exists(),
+            'posts': [{'obj'    : item,
+                    'post'      : item.post,
+                    'liked_by_me'  : True if Like.objects.filter(user__id=user.id, post__id=item.post.id).exists()
+                                        else False,
+                    'rtd_by_me'    : True if Retweet.objects.filter(user__id=user.id, post__id=item.post.id).exists()
+                                        else False,
+                    'like_count': item.post.likes.count(),
+                    'rt_count'  : item.post.retweets.count(),
+                    'cmt_count' : item.post.comments.count(),
+                        } for item in posts],
         }
         return render(request, 'twitter/profile_tweets.html', context)
 
@@ -169,7 +170,8 @@ def profile_likes(request, username):
                                 .order_by('-post__timestamp')[offset:limit]
         post_data = [{'obj' : obj,
                     'post'     : obj.post,
-                    'liked_by_me'  : True,
+                    'liked_by_me'  : True if Like.objects.filter(user__id=user.id, post__id=obj.post.id).exists()
+                                        else False,
                     'rtd_by_me'    : True if Retweet.objects.filter(user__id=user.id, post__id=obj.post.id).exists()
                                         else False,
                     'like_count': obj.post.likes.count(),
@@ -196,40 +198,35 @@ def create_tweet(request):
         post = Post.objects.create(author=request.user, content=request.POST['content'])
         bulk_insert_feed(post=post,
                          activity_type="TW",
-                         actor=request.user,
+                         publisher=request.user,
                          batch_size=100)             # Update Feed table for all of the user's followers
         success_url = request.session.pop('success_url', reverse('home'))
         return HttpResponseRedirect(success_url)
     
     return HttpResponseNotAllowed(['GET', 'POST'])
 
-@csrf_exempt
+@csrf_exempt                        # TODO: set csrf token in axios request
 @login_required
 def like_tweet(request, id):
     if request.method == 'POST':
         post = Post.objects.get(id=id)
         value = json.loads(request.body).get('value',0)
-        print(request.POST)
         if value == 1:                         # value = 1 when the user retweets the post
             try:
                 Like.objects.create(user=request.user, post=post)
-                print("success")
             except IntegrityError:             # To prevent user from liking twice,
-                print("integrity")
                 value = 0                      # Like model has a unique constraint on (user,post) pairs
                 
         elif value == -1:                      # value = 1 when the user retweets the post
             try:
                 like = Like.objects.get(user=request.user, post=post).delete()
-                print("success")
             except Like.DoesNotExist:    
-                print("doesn't exist")
                 value = 0
         return JsonResponse(data={'likes': value})
 
     return HttpResponseNotAllowed(['POST'])
 
-@csrf_exempt
+@csrf_exempt                    # TODO: set csrf token in axios request
 @login_required
 def retweet(request, id):
     if request.method == 'POST':
@@ -238,13 +235,12 @@ def retweet(request, id):
         if value == 1:                          # value = 1 when the user likes the post
             try:
                 Retweet.objects.create(user=request.user, post=post)
-                print("retweeted")
             except IntegrityError:              # To prevent user from retweeting twice,
                 value = 0                       # Retweet model has a unique constraint on (user,post) pairs
             else:                              
                 bulk_insert_feed(post=post,
                                  activity_type="RT",
-                                 actor=request.user,
+                                 publisher=request.user,
                                  batch_size=100)        # Update Feed table for all of the user's followers
 
         elif value == -1:                       # value = -1 when the user un-likes the post
@@ -276,11 +272,12 @@ def comment(request, username, id):
                           })
 
     elif request.method == 'POST':
+        is_first_child = not(parent_post.comments.exists())
         post = Post.objects.create(author=request.user, content=request.POST['content'], 
-                                    post_type='C', parent_post=parent_post)
+                                    post_type='C', parent_post=parent_post, is_first_child=is_first_child)
         bulk_insert_feed(post=post,
                          activity_type="CM",
-                         actor=request.user,
+                         publisher=request.user,
                          batch_size=100)             # Update Feed table for all of the user's followers
         success_url = request.session.pop('success_url', reverse('home'))
         return HttpResponseRedirect(success_url)
@@ -293,22 +290,73 @@ def feed(request):
     if request.method == 'GET':
         page_num = 1
         page_size = 20
-        offset = (page_num / page_size) + 1
+        offset = (page_num / page_size)
         posts = Feed.objects.filter(subscriber__id=request.user.id)   \
                             .order_by('-timestamp')[offset : offset+page_size]
         context = {
             'user': request_user,
-            'posts': [{'obj'     : post,
-                    'liked_by_me'  : True if Like.objects.filter(user__id=request_user.id, post__id=post.id).exists()
+            'posts': [{'obj'    : item,
+                    'post'      : item.post,
+                    'liked_by_me'  : True if Like.objects.filter(user__id=request_user.id, post__id=item.post.id).exists()
                                         else False,
-                    'rtd_by_me'    : True if Retweet.objects.filter(user__id=request_user.id, post__id=post.id).exists()
+                    'rtd_by_me'    : True if Retweet.objects.filter(user__id=request_user.id, post__id=item.post.id).exists()
                                         else False,
-                    'like_count': post.likes.count(),
-                    'rt_count'  : post.retweets.count(),
-                    'cmt_count' : post.comments.count(),
-                    'time_since': 0
-                        } for post in posts],
+                    'like_count': item.post.likes.count(),
+                    'rt_count'  : item.post.retweets.count(),
+                    'cmt_count' : item.post.comments.count(),
+                        } for item in posts],
         }
         return render(request, 'twitter/home.html', context)
 
     return HttpResponseNotAllowed(['GET'])
+
+@csrf_exempt
+@login_required
+def follow(request, id):
+    success = False
+    if request.method == 'POST':
+        try:
+            user = User.objects.get(id=id)
+        except User.DoesNotExist:
+            return JsonResponse({'success': success})
+
+        action = json.loads(request.body).get('action', 'follow') 
+
+        if action == "follow":
+            user.followers.add(request.user)
+            user.save()
+            success = True
+        elif action == "unfollow":
+            user.followers.remove(request.user)
+            user.save()
+            success = True
+        
+        return JsonResponse({'success': success})
+    
+    return HttpResponseNotAllowed(['POST'])
+
+@login_required
+def delete_tweet(request, username, id):
+    deleted = False
+    if request.method == 'DELETE':
+        try:
+            tweet = Post.objects.get(id=id)
+        except Post.DoesNotExist:
+            return HttpResponse('Resource does not exist', status=404)
+        
+        parent_tweet = tweet.parent_post                    
+        deleted_first_child = (tweet.post_type == 'C' and tweet.is_first_child)
+
+        tweet.delete()
+        deleted = True
+                                        # Tweet was the first reply to another tweet
+        if deleted_first_child:         # Set next oldest child to be picked for tweet thread display
+            next_child = parent_tweet.comments.order_by('timestamp')
+            if next_child.exists():
+                next_child.is_first_child = True
+                next_child.save()
+                
+        return JsonResponse({'deleted':deleted,})
+
+    return HttpResponseNotAllowed(['DELETE'])
+    

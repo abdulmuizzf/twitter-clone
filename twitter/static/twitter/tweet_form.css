@@ -15,6 +15,18 @@ body {
     margin: auto;
     padding: 0 10px;
 }
+
+.a1:link, .a1:visited {
+    color: #2a2d2f;
+    background-color: transparent;
+}
+
+.a2:link, .a2:visited{
+    color: var(--gray-four);
+    background-color: transparent;
+}
+
+
 .form-container {
     width: 100%;
     height: 100%;
@@ -86,6 +98,7 @@ body {
     font-size: 20px;
     padding: 12px;
     border:none;
+    white-space: pre-wrap;
 }
 
 .tweet-control {

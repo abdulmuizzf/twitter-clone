@@ -23,7 +23,7 @@
             </div>
             <div class="post-body">
                 <div class="post-head">
-                    <span class="post-author">{{parent_post.author.first_name}}</span>
+                    <span class="post-author"><a class="a1" href="{% url 'profile' parent_post.author.username %}">{{parent_post.author.first_name}}</a></span>
                     <span class="grayed-text">&nbsp;@{{parent_post.author.username}}</span>
                     <span class="grayed-text">&nbsp;·&nbsp;{{parent_post.timestamp|timesince}}</span>
                 </div>

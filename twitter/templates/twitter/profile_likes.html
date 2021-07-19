@@ -73,15 +73,18 @@
     </div>
     <div class="feed">
         {% for like in post_data %}    
+        <div class="post">
             <div class="post-container"
                 onclick="window.location='{% url 'tweet-detail' like.post.author.username like.post.id %}';">
                 <div class="post-profile-div">
-                    <img src="{% static 'media/profiles/default.png'%}" width="45" height="45">
+                    <a href="{% url 'profile' like.post.author.username %}">
+                        <img src="{% static 'media/profiles/default.png'%}" width="45" height="45">
+                    </a>
                 </div>
                 <div class="post-body">
                     <div class="post-head">
-                        <span class="post-author">{{user.first_name}}</span>
-                        <span class="grayed-text">&nbsp;@{{user.username}}</span>
+                        <span class="post-author"><a class="a1" href="{% url 'profile' like.post.author.username %}">{{like.post.author.first_name}}</a></span>
+                        <span class="grayed-text">&nbsp;@{{like.post.author.username}}</span>
                         <span class="grayed-text">&nbsp;·&nbsp;{{like.post.timestamp|timesince|msu}}</span>
                     </div>
                     <div class="post-text">
@@ -89,7 +92,7 @@
                     </div>
                     <div class="post-reaction">
                         <div class="post-button" 
-                            onclick="window.location='{% url 'comment' like.post.author.username like.post.id %}';">
+                            onclick="comment_on_post(event,'{% url 'comment' like.post.author.username like.post.id %}');">
                             <span class="material-icons-outlined">mode_comment</span>
                             <a class="reaction-count">{% if like.cmt_count != 0 %} {{like.cmt_count}} {% endif %}</a>
                         </div>
@@ -106,8 +109,22 @@
                     </div>
                 </div>
             </div>
+        </div>
         {% endfor %}
     </div>
+</div>
+
+<div class="right-pane">
+    <div class="blank-div"></div>
+    <form method='POST' action="{% url 'logout' %}">
+        {% csrf_token %}
+        <button class="btn btn-secondary btn-block logout" type="submit"
+            style="color: #657786;">
+            <span class="material-icons-outlined">
+                logout
+            </span>
+        </button>
+    </form>
 </div>
 
 <script>
@@ -121,6 +138,12 @@ const check_empty = (str) => {
     if (str == '')
         str = '0';
     return str;
+}
+
+const comment_on_post = (event, url) => {
+    event.stopPropagation();
+    event.preventDefault();
+    window.location = url;
 }
 
 const like_post = async (event, elem, url) => {

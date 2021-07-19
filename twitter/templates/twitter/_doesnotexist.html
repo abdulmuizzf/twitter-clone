@@ -47,4 +47,17 @@
     </div>
 </div>
 
+<div class="right-pane">
+    <div class="blank-div"></div>
+    <form method='POST' action="{% url 'logout' %}">
+        {% csrf_token %}
+        <button class="btn btn-secondary btn-block logout" type="submit"
+            style="color: #657786;">
+            <span class="material-icons-outlined">
+                logout
+            </span>
+        </button>
+    </form>
+</div>
+
 {% endblock %}

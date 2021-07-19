@@ -23,6 +23,16 @@ body {
     padding: 0 10px;
 }
 
+.a1:link, .a1:visited {
+    color: #2a2d2f;
+    background-color: transparent;
+}
+
+.a2:link, .a2:visited{
+    color: var(--gray-four);
+    background-color: transparent;
+}
+
 .sidebar {
     border-right: 1px solid var(--gray-two);
     flex: 0.2;
@@ -104,20 +114,42 @@ body {
 font-weight: 500;
 font-size: 18px;
 padding-top: 5px;
+padding-left: 20px;
+position: relative;
+top: 3px;
 }
 
 /**********************************************************************************/
 
-
-.post-container{
-    display: flex;
+.post {
     border: 1px solid var(--gray-two);
     cursor: pointer;
 }
-.post-container:hover{
+.post:hover{
     background-color: var(--gray-highlight);
 }
+.post-container{
+    display: flex;
+}
 
+.post-is-retweet {
+    color: var(--gray-four);
+    font-weight: 700;
+    font-size: 12px;
+    padding: 5px 0px 0px 50px;
+}
+.post-is-retweet span {
+    color: var(--gray-four);
+    font-size: 14px;
+    position: relative;
+    top: 3px;
+    right: 2px;
+}
+.post-is-reply{
+    color: var(--gray-four);
+    font-size: 12px;
+    padding-bottom:3px;
+}
 .post-profile-div {
     width: 45px;
     margin: 10px;
@@ -151,24 +183,67 @@ padding-top: 5px;
     display: inline-block;
     text-align: center;
     width: 60px;
-    height: 20px;
+    height: 25px;
     cursor: pointer;
     margin-left: 5vw;
 }
 .post-button:hover {
     background-color: var(--gray-two);
     border-radius: 15px;
-    color: var(--blue);
     transition: color 180ms ease-out;
+}
+.liked{
+    color: var(--blue);
+}
+.retweeted{
+    color: var(--blue);
 }
 .post-button span{
     font-size: 18px;
+    position: relative;
+    top: 3px;
 }
 .reaction-count {
     font-size: 15px;
     padding-left: 5px;
     position: relative;
-    bottom: 4px;
+    bottom: 1px;
 }
+
+
+/*********************************************************************************************/
+
+.right-pane{
+    display: flex;
+    width: 25%;
+    overflow: hidden;
+    position: relative;
+    justify-content: space-between;
+}
+.blank-div{
+    position: relative;
+    width: 20px;
+}
+.logout {
+    position: relative;
+    top: 10px;
+    right: 20px;
+    padding: 5px 5px;
+    border-radius: 5px;
+    cursor: pointer;
+    height: 40px;
+    width: 40px;
+    background-color: var(--gray-two);
+}
+.logout span{
+    font-size: 30px;
+    position: relative;
+    bottom: 1px;
+}
+
+.logout:hover {
+    background-color: var(--gray-three);
+}
+
 
 

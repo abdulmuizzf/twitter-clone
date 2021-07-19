@@ -14,13 +14,12 @@
 
 <!--sidebar begins-->
 <div class="sidebar">
-    <i class="fab fa-twitter-square"
-        onclick="window.location='{% url 'home' %}'"></i>
+    <i class="fab fa-twitter-square" onclick="window.location='{% url 'home' %}'"></i>
     <div class="sidebar-item" onclick="window.location='{% url 'home' %}'">
         <span class="material-icons-outlined">home</span>
         <h5>Home</h5>
     </div>
-    <div class="sidebar-item active">
+    <div class="sidebar-item {% if user.id == request.user.id %} active {% endif %}">
         <span class="material-icons-outlined">person_outline</span>
         <h5>Profile</h5>
     </div>
@@ -29,8 +28,7 @@
 <!--sidebar ends-->
 <div class="feed-area">
     <div class="home-header">
-        <span class="material-icons-outlined back-button"
-            onclick="window.history.back()">arrow_back</span>
+        <span class="material-icons-outlined back-button" onclick="window.history.back()">arrow_back</span>
         <div class="profile-head">
             {{user.first_name}}
         </div>
@@ -45,12 +43,10 @@
                 </div>
                 <div class="profile-buttons">
                     {% if request.user.id != user.id %}
-                    <button class="follow-button">
-                        {% if followed_by_current_user %}
-                        Unfollow
-                        {% else %}
-                        Follow
-                        {% endif %}
+                    <button class="follow-button 
+                    {% if followed_by_current_user %}followed{% endif %}"
+                        onclick="follow(event,this,'{% url 'follow' user.id %}');">
+                        {% if followed_by_current_user %}Unfollow{% else %}Follow{% endif %}
                     </button>
                     {% endif %}
                 </div>
@@ -71,43 +67,77 @@
         <div onclick="window.location='{% url 'profile-likes' user.username %}';" class="tab-item">Likes</div>
     </div>
     <div class="feed">
-        {% for post in post_data %}
-        <div class="post-container" 
-            onclick="window.location='{% url 'tweet-detail' post.obj.author.username post.obj.id %}';">
-            <div class="post-profile-div">
-                <img src="{% static 'media/profiles/default.png'%}" width="45" height="45">
-            </div>
-            <div class="post-body">
-                <div class="post-head">
-                    <span class="post-author">{{user.first_name}}</span>
-                    <span class="grayed-text">&nbsp;@{{user.username}}</span>
-                    <span class="grayed-text">&nbsp;·&nbsp;{{post.obj.timestamp|timesince|msu}}</span>
+
+        {% for item in posts %}
+        <div class="post"
+            onclick="window.location='{% url 'tweet-detail' item.post.author.username item.post.id %}';">
+            {% if item.obj.activity_type == "RT" %}
+                <div class="post-is-retweet">
+                    <span class="material-icons-outlined">repeat</span>
+                    <a class="a2" href="{% url 'profile' item.obj.publisher.username %}">{{item.obj.publisher.first_name}}</a> Retweeted</div>
+                    
+            {% endif %}
+            <div class="post-container">
+                <div class="post-profile-div">
+                    <a class="a1" href="{% url 'profile' item.post.author.username %}">
+                    <img src="{% static 'media/profiles/default.png'%}" width="45" height="45">
+                    </a>
                 </div>
-                <div class="post-text">
-                    {{post.obj.content}}
-                </div>
-                <div class="post-reaction" onclick="">
-                    <div class="post-button"
-                        onclick="window.location='{% url 'comment' post.obj.author.username post.obj.id %}';">
-                        <span class="material-icons-outlined">mode_comment</span>
-                        <a class="reaction-count">{% if post.cmt_count != 0 %} {{post.cmt_count}} {% endif %}</a>
+                <div class="post-body">
+                    <div class="post-head">
+                        <a class="a1" href="{% url 'profile' item.post.author.username %}">
+                            <span class="post-author">{{item.post.author.first_name}}</span>
+                        </a>
+                        <span class="grayed-text">&nbsp;@{{item.post.author.username}}</span>
+                        <span class="grayed-text">&nbsp;·&nbsp;{{item.post.timestamp|timesince|msu}}</span>
                     </div>
-                    <div class="post-button {% if post.rtd_by_me %} retweeted {% endif %}"
-                        onclick="retweet_post(event, this, '{% url 'retweet' post.obj.id %}')">
-                        <span class="material-icons-outlined">repeat</span>
-                        <a class="reaction-count">{% if post.rt_count != 0 %} {{post.rt_count}} {% endif %}</a>
+                    {% if item.obj.activity_type == "CM" %}
+                    <div class="post-is-reply">
+                        Replying to <a class="a2" href="{% url 'profile' item.post.parent_post.author.username %}">{{item.post.parent_post.author.first_name}}
+                        </a>
                     </div>
-                    <div class="post-button {% if post.liked_by_me %} liked {% endif %}"
-                        onclick="like_post(event, this, '{% url 'like' post.obj.id %}')">
-                        <span class="material-icons-outlined">favorite_border</span>
-                        <a class="reaction-count">{% if post.like_count != 0 %} {{post.like_count}} {% endif %}</a>
+                    {% endif %}
+                    <div class="post-text">
+                        {{item.post.content}}
+                    </div>
+                    <div class="post-reaction">
+                        <div class="post-button"
+                            onclick="comment_on_post(event,'{% url 'comment' item.post.author.username item.post.id %}');">
+                            <span class="material-icons-outlined">mode_comment</span>
+                            <a class="reaction-count">{% if item.cmt_count != 0 %} {{item.cmt_count}} {% endif %}</a>
+                        </div>
+                        <div class="post-button {% if item.rtd_by_me %} retweeted {% endif %}"
+                            onclick="retweet_post(event, this, '{% url 'retweet' item.post.id %}')">
+                            <span class="material-icons-outlined">repeat</span>
+                            <a class="reaction-count">{% if item.rt_count != 0 %} {{item.rt_count}} {% endif %}</a>
+                        </div>
+                        <div class="post-button {% if item.liked_by_me %} liked {% endif %}"
+                            onclick="like_post(event, this, '{% url 'like' item.post.id %}')">
+                            <span class="material-icons-outlined">favorite_border</span>
+                            <a class="reaction-count">{% if item.like_count != 0 %} {{item.like_count}} {% endif %}</a>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
         {% endfor %}
+
     </div>
 </div>
+
+<div class="right-pane">
+    <div class="blank-div"></div>
+    <form method='POST' action="{% url 'logout' %}">
+        {% csrf_token %}
+        <button class="btn btn-secondary btn-block logout" type="submit"
+            style="color: #657786;">
+            <span class="material-icons-outlined">
+                logout
+            </span>
+        </button>
+    </form>
+</div>
+
 
 <script>
 
@@ -120,6 +150,12 @@
         if (str == '')
             str = '0';
         return str;
+    }
+
+    const comment_on_post = (event, url) => {
+        event.stopPropagation();
+        event.preventDefault();
+        window.location = url;
     }
 
     const like_post = async (event, elem, url) => {
@@ -138,7 +174,7 @@
 
         await axios.post(url, {
             'value': 1
-            })
+        })
             .then((res) => {
                 if (res['likes'] == 0) {             // Retweet unsuccessful, undo element change
                     if (liked) {
@@ -168,7 +204,7 @@
 
         await axios.post(url, {
             'value': 1
-            })
+        })
             .then((res) => {
                 if (res['retweets'] == 0) {             // Retweet unsuccessful, undo element change
                     if (retweeted) {
@@ -179,7 +215,54 @@
                     elem.children[1].textContent = retweets
                     elem.classList.toggle("retweeted");
                 }
-            });
+            }
+            );
+    }
+
+    const follow = async (event, elem, url) => {
+        event.stopPropagation();
+        event.preventDefault();
+        followed = elem.classList.contains("followed");
+        
+        if (followed) {
+            action = "unfollow"
+            elem.textContent = "Follow"
+        } else {
+            action = "follow"
+            elem.textContent = "Unfollow"
+        }
+        elem.classList.toggle("followed");
+
+        await axios.post(url, {
+            'action': action,
+            })
+            .then((res) => {
+                if (not(res['success'])) {             // Follow unsuccessful, undo element change
+                    if (followed) {
+                        elem.textContent = "Unfollow"
+                    } else {
+                        elem.textContent = "Follow"
+                    }
+                    elem.classList.toggle("followed");
+                }
+            })
+            .catch((err)=>{
+                console.log(err)
+            }
+        );
+    }
+    const logout = async (tweet_url) => {
+        var result = confirm("Confirm logout?");
+        if (result) {
+            await axios.get(tweet_url)
+                .then((res) => {
+                    if (res['login_url'])
+                        window.location = res['login_url'];
+                })
+                .catch((err) => {
+                    console.log(err);
+                });
+        }
     }
 
 </script>

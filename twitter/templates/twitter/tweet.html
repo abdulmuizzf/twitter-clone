@@ -19,8 +19,7 @@
         <span class="material-icons-outlined">home</span>
         <h5>Home</h5>
     </div>
-    <div class="sidebar-item"
-        onclick="window.location='{% url 'profile-tweets' user.username %}'">
+    <div class="sidebar-item" onclick="window.location='{% url 'profile-tweets' user.username %}'">
         <span class="material-icons-outlined">person_outline</span>
         <h5>Profile</h5>
     </div>
@@ -43,26 +42,29 @@
 
             <div class="post-head-container">
                 <div class="post-head">
-                    <div class="post-author">{{tweet.obj.author.first_name}}</div>
+                    <div class="post-author">
+                        <a class="a1" href="{% url 'profile' tweet.obj.author.username %}">
+                            {{tweet.obj.author.first_name}}
+                        </a>
+                    </div>
                     <div class="grayed-text">@{{tweet.obj.author.username}}</div>
                 </div>
+                {% if user.id == tweet.obj.author.id %}
 
-                    {% if user.id == tweet.obj.author.id %}
-                    <div class="menu"
-                        onclick="dropdown(event)">
-                        <span class="material-icons-outlined">more_horiz</span>
+                <div class="menu" onclick="dropdown(event)">
+                    <span class="material-icons-outlined">more_horiz</span>
+                </div>
+                <div class="dropdown-content">
+                    <div id="dropdown-item" class="dropdown-item"
+                        onclick="popup('{% url 'delete-tweet' tweet.obj.author.username tweet.obj.id %}','{{csrf_token}}');">
+                        <span class="material-icons-outlined">
+                            delete
+                        </span>
+                        <span class="dropdown-text">Delete</span>
                     </div>
-                    <div class="dropdown-content">
-                        <div id="dropdown-item" class="dropdown-item"
-                            onclick="popup(event,this,'{{tweet.obj.id}}');" >
-                            <span class="material-icons-outlined">
-                                delete
-                            </span>
-                            <span class="dropdown-text">Delete</span>
-                        </div>
-                    </div>
-                    
-                    {% endif %}
+                </div>
+
+                {% endif %}
             </div>
         </div>
         <div class="post-body">
@@ -75,7 +77,7 @@
         </div>
         <div class="post-reaction">
             <div class="post-button"
-                onclick="window.location='{% url 'comment' tweet.obj.author.username tweet.obj.id %}';">
+                onclick="comment_on_post(event,'{% url 'comment' tweet.obj.author.username tweet.obj.id %}');">
                 <span class="material-icons-outlined">mode_comment</span>
                 <a class="post-reaction-count">{% if tweet.cmt_count != 0 %} {{tweet.cmt_count}} {% endif %}</a>
             </div>
@@ -99,13 +101,16 @@
         <div class="cmt-thread">
             {% for comment in thread %}
 
-            <div class="cmt-container" onclick="window.location='{% url 'tweet-detail' comment.obj.id';">
+            <div class="cmt-container"
+                onclick="window.location='{% url 'tweet-detail' comment.obj.author.username comment.obj.id%}';">
                 <div class="cmt-profile-div">
                     <img src="{% static 'media/profiles/default.png'%}" width="45" height="45">
                 </div>
                 <div class="cmt-body">
                     <div class="cmt-head">
-                        <span class="cmt-author">{{comment.obj.author.first_name}}</span>
+                        <span class="cmt-author"><a class="a1"
+                                href="{% url 'profile' comment.obj.author.username %}">{{comment.obj.author.first_name}}
+                            </a></span>
                         <span
                             class="grayed-text">&nbsp;@{{comment.obj.author.username}}&nbsp;·&nbsp;{{comment.obj.timestamp|timesince|msu}}</span>
                     </div>
@@ -113,17 +118,20 @@
                         {{comment.obj.content}}
                     </div>
                     <div class="cmt-reaction">
-                        <div class="cmt-button">
+                        <div class="cmt-button"
+                            onclick="comment_on_post(event,'{% url 'comment' comment.obj.author.username comment.obj.id %}');">
                             <span class="material-icons-outlined">mode_comment</span>
-                            <a class="cmt-reaction-count">{{comment.obj.cmt_count}}</a>
+                            <a class="cmt-reaction-count">{% if comment.cmt_count != 0 %} {{comment.cmt_count}} {% endif %}</a>
                         </div>
-                        <div class="cmt-button">
+                        <div class="cmt-button" {% if comment.rtd_by_me %} retweeted {% endif %}"
+                            onclick="retweet_post(event, this, '{% url 'retweet' comment.obj.id %}')">
                             <span class="material-icons-outlined">repeat</span>
-                            <a class="cmt-reaction-count">{{comment.obj.rt_count}}</a>
+                            <a class="cmt-reaction-count">{% if comment.rt_count != 0 %} {{comment.rt_count}} {% endif %}</a>
                         </div>
-                        <div class="cmt-button">
+                        <div class="cmt-button" {% if comment.liked_by_me %} liked {% endif %}"
+                            onclick="like_post(event, this, '{% url 'like' comment.obj.id %}')">
                             <span class="material-icons-outlined">favorite_border</span>
-                            <a class="cmt-reaction-count">{{comment.obj.like_count}}</a>
+                            <a class="cmt-reaction-count">{% if comment.like_count != 0 %} {{comment.like_count}} {% endif %}</a>
                         </div>
                     </div>
                 </div>
@@ -136,22 +144,50 @@
     </div>
 </div>
 
-<div class="popup-content">
-    <div class="popup-text">
-        Confirm Delete?
-    </div>
-    <div class="popup-button-div">
-        <button class="popup-button">No</button>
-        <button class="popup-button dark">Yes</button>
-    </div>
+<div class="right-pane">
+    <div class="blank-div"></div>
+    <form method='POST' action="{% url 'logout' %}">
+        {% csrf_token %}
+        <button class="btn btn-secondary btn-block logout" type="submit" style="color: #657786;">
+            <span class="material-icons-outlined">
+                logout
+            </span>
+        </button>
+    </form>
 </div>
 
 <script>
+    function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie != '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = cookies[i].trim();
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
 
-    const popup = (a,b,c) => {
+
+    const popup = async (tweet_url, csrftoken) => {
         var result = confirm("Want to delete?");
         if (result) {
-            console.log("Deletion")
+            await axios.delete(tweet_url, {
+                headers: { 'X-CSRFToken': csrftoken },
+            })
+                .then((res) => {
+                    if (res.deleted)
+                    {   console.log(res.deleted)
+                        window.history.back();}
+                })
+                .catch((err) => {
+                    console.log(err);
+                });
         }
     }
     const dropdown = (event) => {
@@ -159,18 +195,16 @@
         dropdown_element.classList.toggle("show");
         event.stopPropagation();
         event.preventDefault();
-        console.log("here")
     }
 
-    window.onclick = function(event) {
+    window.onclick = function (event) {
         if (!event.target.matches('.dropdown-item')) {
-            console.log("there")
             var dropdown_element = document.getElementById("dropdown-item");
             if (dropdown_element.classList.contains('show')) {
                 dropdown_element.classList.remove('show');
             }
         }
-    } 
+    }
 
     const check_zero = (str) => {
         if (str == '0')
@@ -181,6 +215,12 @@
         if (str == '')
             str = '0';
         return str;
+    }
+
+    const comment_on_post = (event, url) => {
+        event.stopPropagation();
+        event.preventDefault();
+        window.location = url;
     }
 
     const like_post = async (event, elem, url) => {
@@ -241,6 +281,20 @@
                     elem.classList.toggle("retweeted");
                 }
             });
+    }
+
+    const logout = async (tweet_url) => {
+        var result = confirm("Confirm logout?");
+        if (result) {
+            await axios.get(tweet_url)
+                .then((res) => {
+                    if (res['login_url'])
+                        window.location = res['login_url'];
+                })
+                .catch((err) => {
+                    console.log(err);
+                });
+        }
     }
 
 </script>

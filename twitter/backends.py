@@ -8,9 +8,6 @@ class SawoBackend(ModelBackend):
             user = User.objects.get(email=email)
         except User.DoesNotExist:
             return None
-        else:
-            # Sawo Auth goes here
-            pass
         return user
     
     def get_user(self, username):

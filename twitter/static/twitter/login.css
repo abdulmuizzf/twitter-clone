@@ -6,5 +6,9 @@
     padding: 0;
 }
 .title {
-    color: #657786;
+    color: #333a41;
+}
+
+.signup-link:link, .signup-link:visited{
+    color:#243e58;
 }

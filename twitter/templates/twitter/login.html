@@ -12,13 +12,20 @@
         <br />
         <h1 class="title">{{title}}</h1>
     </div>
-    <div class="row h-75 d-flex justify-content-center">
-        <div class="w-50 mt-5 p-5">
+    <div class="row h-50 d-flex justify-content-center">
+        <div class="w-50 mt-5 ">
             <div class=""></div>
             <div id="sawo-form" class="my-auto mx-auto">
                 {% include 'partial/_sawo.html' %}
             </div>
         </div>
     </div>
+        <div class="row text-center justify-content-center" style="padding-top: 50px;">
+            <form method="GET" action="{% url 'signup' %}">
+                
+                    Don't have an account? <a class="signup-link" href="{% url 'signup' %}">Sign up
+                </a>
+            </form>
+        </div>
 </div>
 {% endblock %}

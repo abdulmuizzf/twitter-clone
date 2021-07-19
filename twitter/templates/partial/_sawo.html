@@ -53,9 +53,9 @@
                         console.log(error.response.headers);
                         sawo.showForm();
                         errorElement = createErrorElement();
-                        setErrorText(errorElement, "Error: Unauthorized request")
+                        setErrorText(errorElement, "Error: " + error.response.data['message'])
                     }
-                )
+                    )
             },
         };
         var sawo = new Sawo(config);
