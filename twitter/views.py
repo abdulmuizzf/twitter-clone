@@ -31,7 +31,7 @@ def index(request):
 def signup(request):
     if request.method == 'GET':
         context = {
-            "title": 'Join Twitter',
+            "title": 'Welcome to Twitter',
             "form": SignupForm(initial=signup_info(request.session)),
         }
         return render(request, 'twitter/signup.html', context) 
@@ -105,7 +105,8 @@ def tweet_detail(request, username, id):
                         for comment in comments]      
                                                     # `tweet_thread` finds the chain of first-level comments
                                                     #  under each tweet (i.e a twitter comment thread)
-        context = {                                                     
+        context = {   
+            'title': f'{request.user.first_name} on Twitter',
             'tweet': {
                 'obj': tweet,
                 'liked_by_me'  : True if Like.objects.filter(user__id=request.user.id, post__id=tweet.id).exists()
@@ -137,6 +138,7 @@ def profile_tweets(request, username):
         posts = Feed.objects.filter(publisher__id=user.id, subscriber__id=user.id)   \
                             .order_by('-timestamp')[offset : offset+page_size]
         context = {
+            'title': f'{user.first_name} (@{user.username})',
             'user': user,
             'posts': [{'obj'    : item,
                     'post'      : item.post,
@@ -148,6 +150,7 @@ def profile_tweets(request, username):
                     'rt_count'  : item.post.retweets.count(),
                     'cmt_count' : item.post.comments.count(),
                         } for item in posts],
+            'my_profile': user.id == request.user.id,
         }
         return render(request, 'twitter/profile_tweets.html', context)
 
@@ -177,11 +180,12 @@ def profile_likes(request, username):
                     'like_count': obj.post.likes.count(),
                     'rt_count'  : obj.post.retweets.count(),
                     'cmt_count' : obj.post.comments.count(),
-                    'age' : int((obj.post.timestamp - timezone.now()).seconds/3600)
                         } for obj in liked_tweets]
         context = {
+            'title': f'{user.first_name} (@{user.username})',
             'user': user,
             'post_data': post_data,
+            'my_profile': user.id == request.user.id,
             'followed_by_current_user': request.user.followers.filter(id=user.id).exists(),
         }
         return render(request, 'twitter/profile_likes.html', context)
@@ -192,7 +196,7 @@ def profile_likes(request, username):
 def create_tweet(request):
     if request.method == 'GET':
         request.session['success_url'] = request.META['HTTP_REFERER']
-        return render(request, 'twitter/tweet_form.html')
+        return render(request, 'twitter/tweet_form.html', context={'title':'Twitter'})
 
     elif request.method == 'POST':
         post = Post.objects.create(author=request.user, content=request.POST['content'])
@@ -265,6 +269,7 @@ def comment(request, username, id):
         request.session['success_url'] = request.META['HTTP_REFERER']
         return render(request, 'twitter/comment_form.html', 
                       context={
+                          'title': 'Twitter',
                           'parent_post': parent_post,
                           'replying_to_other': request.user != parent_post.author,
                           'placeholder': "Add another tweet" if request.user == parent_post.author 
@@ -294,6 +299,7 @@ def feed(request):
         posts = Feed.objects.filter(subscriber__id=request.user.id)   \
                             .order_by('-timestamp')[offset : offset+page_size]
         context = {
+            'title': 'Home - Twitter',
             'user': request_user,
             'posts': [{'obj'    : item,
                     'post'      : item.post,

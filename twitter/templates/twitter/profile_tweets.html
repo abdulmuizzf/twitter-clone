@@ -7,7 +7,7 @@
 <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css"
     integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous" />
 <link rel="stylesheet" href="{% static 'twitter/profile_tweets.css' %}">
-<title>Home - Twitter</title>
+<title>{{title}}</title>
 {% endblock %}
 <!-- style="background-color: #cccccc"-->
 {% block content %}
@@ -19,7 +19,8 @@
         <span class="material-icons-outlined">home</span>
         <h5>Home</h5>
     </div>
-    <div class="sidebar-item {% if user.id == request.user.id %} active {% endif %}">
+    <div class="sidebar-item {% if my_profile %} active {% endif %}"
+        {% if my_profile %} onclick="window.location='{% url 'profile-tweets' user %}'" {% endif %}>
         <span class="material-icons-outlined">person_outline</span>
         <h5>Profile</h5>
     </div>
@@ -42,7 +43,7 @@
                     <div class="username">@{{user.username}}</div>
                 </div>
                 <div class="profile-buttons">
-                    {% if request.user.id != user.id %}
+                    {% if my_profile is False %}
                     <button class="follow-button 
                     {% if followed_by_current_user %}followed{% endif %}"
                         onclick="follow(event,this,'{% url 'follow' user.id %}');">
