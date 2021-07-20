@@ -22,7 +22,7 @@
         <h5>Home</h5>
     </div>
     <div class="sidebar-item {% if my_profile %} active {% endif %}"
-        {% if my_profile %} onclick="window.location='{% url 'profile-tweets' user %}'" {% endif %}>
+        {% if my_profile is False %} onclick="window.location='{% url 'profile-tweets' user %}'" {% endif %}>
         <span class="material-icons-outlined">person_outline</span>
         <h5>Profile</h5>
     </div>
