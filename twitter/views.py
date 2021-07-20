@@ -343,7 +343,7 @@ def follow(request, id):
 
 @login_required
 def delete_tweet(request, username, id):
-    deleted = False
+    deleted = "false"
     if request.method == 'DELETE':
         try:
             tweet = Post.objects.get(id=id)
@@ -354,7 +354,7 @@ def delete_tweet(request, username, id):
         deleted_first_child = (tweet.post_type == 'C' and tweet.is_first_child)
 
         tweet.delete()
-        deleted = True
+        deleted = "true"
                                         # Tweet was the first reply to another tweet
         if deleted_first_child:         # Set next oldest child to be picked for tweet thread display
             next_child = parent_tweet.comments.order_by('timestamp')

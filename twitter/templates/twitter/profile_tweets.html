@@ -7,6 +7,7 @@
 <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css"
     integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous" />
 <link rel="stylesheet" href="{% static 'twitter/profile_tweets.css' %}">
+<link rel="icon" style="fill: #50b7f5;" href="{% static 'twitter/twitter-square-brands.svg'%}" type="image/svg"/>
 <title>{{title}}</title>
 {% endblock %}
 <!-- style="background-color: #cccccc"-->
@@ -20,7 +21,7 @@
         <h5>Home</h5>
     </div>
     <div class="sidebar-item {% if my_profile %} active {% endif %}"
-        {% if my_profile is False %} onclick="window.location='{% url 'profile-tweets' user %}'" {% endif %}>
+        {% if my_profile is False %} onclick="window.location='{% url 'profile-tweets' request.user %}'" {% endif %}>
         <span class="material-icons-outlined">person_outline</span>
         <h5>Profile</h5>
     </div>
@@ -29,7 +30,7 @@
 <!--sidebar ends-->
 <div class="feed-area">
     <div class="home-header">
-        <span class="material-icons-outlined back-button" onclick="window.history.back()">arrow_back</span>
+        <span class="material-icons-outlined back-button" onclick="go_back()">arrow_back</span>
         <div class="profile-head">
             {{user.first_name}}
         </div>
@@ -142,6 +143,13 @@
 
 <script>
 
+    const go_back = () => {
+        if ('referrer' in document) {
+            window.location = document.referrer;
+        } else {
+            window.history.back();
+        }
+    }
     const check_zero = (str) => {
         if (str == '0')
             str = '';

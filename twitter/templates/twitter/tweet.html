@@ -7,6 +7,7 @@
 <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css"
     integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous" />
 <link rel="stylesheet" href="{% static 'twitter/tweet.css' %}">
+<link rel="icon" style="fill: #50b7f5;" href="{% static 'twitter/twitter-square-brands.svg'%}" type="image/svg"/>
 <title>{{title}}</title>
 {% endblock %}
 <!-- style="background-color: #cccccc"-->
@@ -28,7 +29,7 @@
 <!--sidebar ends-->
 <div class="feed-area">
     <div class="home-header">
-        <span class="material-icons-outlined back-button" onclick="window.history.back()">arrow_back</span>
+        <span class="material-icons-outlined back-button" onclick="go_back()">arrow_back</span>
         <div class="tweet-head">
             Tweet
         </div>
@@ -56,7 +57,7 @@
                 </div>
                 <div class="dropdown-content">
                     <div id="dropdown-item" class="dropdown-item"
-                        onclick="popup('{% url 'delete-tweet' tweet.obj.author.username tweet.obj.id %}','{{csrf_token}}');">
+                        onclick="confirm_delete('{% url 'delete-tweet' tweet.obj.author.username tweet.obj.id %}','{{csrf_token}}');">
                         <span class="material-icons-outlined">
                             delete
                         </span>
@@ -157,6 +158,15 @@
 </div>
 
 <script>
+    const go_back = () => {
+        console.log(document.referrer)
+        if ('referrer' in document) {
+            window.location = document.referrer;
+        } else {
+            window.history.back();
+        }
+    }
+
     function getCookie(name) {
         var cookieValue = null;
         if (document.cookie && document.cookie != '') {
@@ -174,16 +184,15 @@
     }
 
 
-    const popup = async (tweet_url, csrftoken) => {
+    const confirm_delete = async (tweet_url, csrftoken) => {
         var result = confirm("Want to delete?");
         if (result) {
             await axios.delete(tweet_url, {
                 headers: { 'X-CSRFToken': csrftoken },
             })
                 .then((res) => {
-                    if (res.deleted)
-                    {   console.log(res.deleted)
-                        window.history.back();}
+                    if (res.data.deleted == "true"){
+                        go_back()}
                 })
                 .catch((err) => {
                     console.log(err);

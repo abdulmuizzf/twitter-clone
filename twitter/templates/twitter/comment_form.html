@@ -6,6 +6,7 @@
 <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css"
     integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous" />
 <link rel="stylesheet" href="{% static 'twitter/comment_form.css' %}">
+<link rel="icon" style="fill: #50b7f5;" href="{% static 'twitter/twitter-square-brands.svg'%}" type="image/svg"/>
 <title>{{title}}</title>
 {% endblock %}
 <!-- style="background-color: #cccccc"-->
@@ -15,7 +16,7 @@
     <div class="form-outer">
         <div class="home-header">
             <span class="material-icons-outlined back-button"
-                  onclick="window.history.back()">arrow_back</span>
+                  onclick="go_back()">arrow_back</span>
         </div>
         <div class="post-container">
             <div class="post-profile-div">
@@ -54,8 +55,14 @@
     </div>
 </div>
 
-{% endblock %}
-
 <script>
-
+    const go_back = () => {
+        if ('referrer' in document) {
+            window.location = document.referrer;
+        } else {
+            window.history.back();
+        }
+    }
 </script>
+
+{% endblock %}
