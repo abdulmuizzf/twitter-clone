@@ -67,7 +67,7 @@ def tweet_thread(post, user):
 
     thread = [post]             # TODO: Fix CTE query to replace this
     if post.comments.exists():
-        post = post.comments.filter(is_first_child=True, parent_post=post)[0]
+        post = post.comments.filter(is_first_child=True, parent_post=post.id)[0]
         thread.append(post)
         if post.comments.exists():
             thread.append(post.comments.filter(is_first_child=True, parent_post=post)[0])

@@ -4,10 +4,8 @@
 
 {% block head %}
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined" rel="stylesheet">
-<link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css"
-    integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous" />
 <link rel="stylesheet" href="{% static 'twitter/profile_tweets.css' %}">
-<title>Home - Twitter</title>
+<title>{{title}}</title>
 {% endblock %}
 <!-- style="background-color: #cccccc"-->
 {% block content %}
@@ -21,7 +19,8 @@
         <span class="material-icons-outlined">home</span>
         <h5>Home</h5>
     </div>
-    <div class="sidebar-item active">
+    <div class="sidebar-item {% if my_profile %} active {% endif %}"
+        {% if my_profile is False %} onclick="window.location='{% url 'profile-tweets' request.user %}'" {% endif %}>
         <span class="material-icons-outlined">person_outline</span>
         <h5>Profile</h5>
     </div>
@@ -31,7 +30,7 @@
 <div class="feed-area">
     <div class="home-header">
         <span class="material-icons-outlined back-button"
-            onclick="window.history.back()">arrow_back</span>
+            onclick="go_back()">arrow_back</span>
         <div class="profile-head">
             {{user.first_name}}
         </div>
@@ -45,7 +44,7 @@
                     <div class="username">@{{user.username}}</div>
                 </div>
                 <div class="profile-buttons">
-                    {% if request.user.id != user.id %}
+                    {% if my_profile is False %}
                         <button class="follow-button">
                             {% if followed_by_current_user %}
                                 Unfollow
@@ -128,7 +127,13 @@
 </div>
 
 <script>
-
+const go_back = () => {
+        if ('referrer' in document) {
+            window.location = document.referrer;
+        } else {
+            window.history.back();
+        }
+    }
 const check_zero = (str) => {
     if(str == '0')
         str = '';

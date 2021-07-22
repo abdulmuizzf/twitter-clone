@@ -22,6 +22,7 @@ class SignupForm(forms.Form):
                                 validators=[UsernameValidator(), unique_username_validator])
     bio = forms.CharField(widget=forms.Textarea(attrs={'class':'form-control',
                                         'cols': '20', 'rows': '2',
-                                        'placeholder': 'Bio'}),
+                                        'placeholder': 'Bio',
+                                        'data-emojiable':'true'}),
                         label='',
                         max_length=160)   

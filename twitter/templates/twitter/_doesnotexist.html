@@ -3,10 +3,8 @@
 
 {% block head %}
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined" rel="stylesheet">
-<link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css"
-    integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous" />
 <link rel="stylesheet" href="{% static 'twitter/tweet.css' %}">
-<title>Home - Twitter</title>
+<title>Twitter</title>
 {% endblock %}
 <!-- style="background-color: #cccccc"-->
 {% block content %}
@@ -32,7 +30,7 @@
 <div class="feed-area">
     <div class="home-header">
         <span class="material-icons-outlined back-button"
-            onclick="window.history.back()">arrow_back</span>
+            onclick="go_back()">arrow_back</span>
         <div class="tweet-head">
             Tweet
         </div>
@@ -60,4 +58,13 @@
     </form>
 </div>
 
+<script>
+    const go_back = () => {
+        if ('referrer' in document) {
+            window.location = document.referrer;
+        } else {
+            window.history.back();
+        }
+    }
+</script>
 {% endblock %}

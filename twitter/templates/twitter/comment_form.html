@@ -3,10 +3,8 @@
 
 {% block head %}
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined" rel="stylesheet">
-<link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css"
-    integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous" />
 <link rel="stylesheet" href="{% static 'twitter/comment_form.css' %}">
-<title>Home - Twitter</title>
+<title>{{title}}</title>
 {% endblock %}
 <!-- style="background-color: #cccccc"-->
 {% block content %}
@@ -15,7 +13,7 @@
     <div class="form-outer">
         <div class="home-header">
             <span class="material-icons-outlined back-button"
-                  onclick="window.history.back()">arrow_back</span>
+                  onclick="go_back()">arrow_back</span>
         </div>
         <div class="post-container">
             <div class="post-profile-div">
@@ -44,7 +42,7 @@
             <div class="tweet-box">
                 <form method="post">
                     {% csrf_token %}
-                    <textarea name="content" class="tweet-input" maxlength="280" placeholder="{{placeholder}}"></textarea>
+                    <textarea id="content" class="tweet-input" maxlength="280" data-emojiable="true" placeholder="{{placeholder}}"></textarea>
                     <div class="tweet-control">
                         <input type="submit" value="Tweet" class="tweet-button"></input>
                     </div>
@@ -54,8 +52,15 @@
     </div>
 </div>
 
-{% endblock %}
-
 <script>
 
+    const go_back = () => {
+        if ('referrer' in document) {
+            window.location = document.referrer;
+        } else {
+            window.history.back();
+        }
+    }
 </script>
+
+{% endblock %}
