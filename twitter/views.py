@@ -29,7 +29,6 @@ def index(request):
 
     return HttpResponseNotAllowed(['GET'])
 
-@csrf_exempt
 def signup(request):
     if request.method == 'GET':
         context = {
