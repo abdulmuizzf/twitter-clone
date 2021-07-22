@@ -7,6 +7,7 @@ from django.shortcuts import render
 from django.utils import timezone
 from django.urls import reverse
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponsePermanentRedirect, JsonResponse
+from django.views.decorators import csrf
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import authenticate, login as session_login, logout as session_logout
 from django.contrib.auth.decorators import login_required
@@ -28,6 +29,7 @@ def index(request):
 
     return HttpResponseNotAllowed(['GET'])
 
+@csrf_exempt
 def signup(request):
     if request.method == 'GET':
         context = {

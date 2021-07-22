@@ -3,10 +3,7 @@
 
 {% block head %}
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined" rel="stylesheet">
-<link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css"
-    integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous" />
 <link rel="stylesheet" href="{% static 'twitter/tweet_form.css' %}">
-<link rel="icon" style="fill: #50b7f5;" href="{% static 'twitter/twitter-square-brands.svg'%}" type="image/svg"/>
 <title>{{title}}</title>
 {% endblock %}
 <!-- style="background-color: #cccccc"-->
@@ -25,7 +22,7 @@
             <div class="tweet-box">
                 <form method="post">
                     {% csrf_token %}
-                    <textarea name="content" class="tweet-input" maxlength="280" placeholder="What's happening?"></textarea>
+                    <textarea name="content" data-emojiable="true" class="tweet-input" maxlength="280" placeholder="What's happening?"></textarea>
                     <div class="tweet-control">
                         <input type="submit" value="Tweet" class="tweet-button"></input>
                     </div>
@@ -36,6 +33,26 @@
 </div>
 
 <script>
+    const remove_recent = () => {
+        emoji_items = document.getElementsByClassName("emoji-items")[0];
+        console.log("reached")
+        while (emoji_items.firstChild) {
+            emoji_items.lastChild.remove()
+        }
+    }
+    window.onload = function() {
+        emoji_menu = document.getElementsByClassName("emoji-picker")[0];
+        emoji_menu.addEventListener("click", remove_recent, true);
+        emoji_menu_tabs = document.getElementsByClassName("emoji-menu-tab");
+        for (let tab of emoji_menu_tabs){
+            tab.replaceWith(tab.cloneNode(true));
+            tab.addEventListener("onmouseup", remove_recent,true);
+        }
+        emoji_recent = document.getElementsByClassName("icon-recent")[0]
+        if(!emoji_recent)
+            emoji_recent = document.getElementsByClassName("icon-recent-selected")[0]
+        emoji_recent.addEventListener("onchange", remove_recent, true)
+    }
     const go_back = () => {
         if ('referrer' in document) {
             window.location = document.referrer;
