@@ -25,15 +25,16 @@ body {
     z-index: 1;
 }
 
-a:link {
-    color: #2a2d2f;
-    background-color: transparent;
-  }
-  
-a:visited {
+a:link, a:visited {
 color: #2a2d2f;
 background-color: transparent;
 }
+
+.a2:link, .a2:visited{
+    color: var(--gray-four);
+    background-color: transparent;
+}
+
 
 
 .sidebar {
@@ -254,6 +255,11 @@ background-color: transparent;
     margin-top: 10px;
     margin-bottom: 10px;
     margin-right: 10px;
+}
+.post-is-reply{
+    color: var(--gray-four);
+    font-size: 14px;
+    padding-bottom:5px;
 }
 .post-author {
     font-weight: 600;

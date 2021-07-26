@@ -31,8 +31,49 @@
             Tweet
         </div>
     </div>
-
+    {% if parent %}
+    <div class="parent-post">
+        <!-- Same styling as comments -->
+        <div class="cmt-container"
+            onclick="window.location='{% url 'tweet-detail' parent.obj.author.username parent.obj.id%}';">
+            <div class="cmt-profile-div">
+                <img src="{% static 'media/profiles/default.png'%}" width="45" height="45">
+            </div>
+            <div class="cmt-body">
+                <div class="cmt-head">
+                    <span class="cmt-author"><a class="a1"
+                            href="{% url 'profile' parent.obj.author.username %}">{{parent.obj.author.first_name}}
+                        </a></span>
+                    <span
+                        class="grayed-text">&nbsp;@{{parent.obj.author.username}}&nbsp;·&nbsp;{{parent.obj.timestamp|timesince|msu}}</span>
+                </div>
+                <div class="cmt-text">
+                    {{parent.obj.content}}
+                </div>
+                <div class="cmt-reaction">
+                    <div class="cmt-button"
+                        onclick="comment_on_post(event,'{% url 'comment' parent.obj.author.username parent.obj.id %}');">
+                        <span class="material-icons-outlined">mode_comment</span>
+                        <a class="cmt-reaction-count">{% if parent.cmt_count != 0 %} {{parent.cmt_count}} {% endif %}</a>
+                    </div>
+                    <div class="cmt-button" {% if parent.rtd_by_me %} retweeted {% endif %}"
+                        onclick="retweet_post(event, this, '{% url 'retweet' parent.obj.id %}')">
+                        <span class="material-icons-outlined">repeat</span>
+                        <a class="cmt-reaction-count">{% if parent.rt_count != 0 %} {{parent.rt_count}} {% endif %}</a>
+                    </div>
+                    <div class="cmt-button" {% if parent.liked_by_me %} liked {% endif %}"
+                        onclick="like_post(event, this, '{% url 'like' parent.obj.id %}')">
+                        <span class="material-icons-outlined">favorite_border</span>
+                        <a class="cmt-reaction-count">{% if parent.like_count != 0 %} {{parent.like_count}} {% endif %}</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+    {% endif %}
     <div class="post-container">
+        
         <div class="post-profile-div">
             <div class="post-img-div">
                 <img src="{% static 'media/profiles/default.png'%}" width="45" height="45">
@@ -66,6 +107,12 @@
             </div>
         </div>
         <div class="post-body">
+            {% if parent %}
+            <div class="post-is-reply">
+                Replying to <a class="a2" href="{% url 'profile' parent.obj.author.username %}">{{parent.obj.author.first_name}}
+                </a>
+            </div>
+            {% endif %}
             <div class="post-text">
                 {{tweet.obj.content}}
             </div>
@@ -182,7 +229,7 @@
 
 
     const confirm_delete = async (tweet_url, csrftoken) => {
-        var result = confirm("Want to delete?");
+        var result = confirm("Delete Tweet?");
         if (result) {
             await axios.delete(tweet_url, {
                 headers: { 'X-CSRFToken': csrftoken },

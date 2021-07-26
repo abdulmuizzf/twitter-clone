@@ -106,6 +106,18 @@ def tweet_detail(request, username, id):
                         for comment in comments]      
                                                     # `tweet_thread` finds the chain of first-level comments
                                                     #  under each tweet (i.e a twitter comment thread)
+        parent_details = None
+        if tweet.parent_post:
+            parent_details = {
+                'obj': tweet.parent_post,
+                'liked_by_me'  : True if Like.objects.filter(user__id=request.user.id, post__id=tweet.parent_post.id).exists()
+                                        else False,
+                'rtd_by_me'    : True if Retweet.objects.filter(user__id=request.user.id, post__id=tweet.parent_post.id).exists()
+                                    else False,
+                'like_count': tweet.parent_post.likes.count(),
+                'rt_count'  : tweet.parent_post.retweets.count(),
+                'cmt_count' : tweet.parent_post.comments.count(),
+                }
         context = {   
             'title': f'{request.user.first_name} on Twitter',
             'tweet': {
@@ -118,6 +130,7 @@ def tweet_detail(request, username, id):
                 'rt_count'  : tweet.retweets.count(),
                 'cmt_count' : tweet.comments.count(),
                 },
+            'parent': parent_details,
             'threads': threads,
             'user': request.user
         }
