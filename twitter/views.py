@@ -78,7 +78,7 @@ def login(request):
                 redirect_url = request.GET.get('next','/home/')
                 return JsonResponse({'redirect': redirect_url})
             else:
-                return HttpResponse(status=401, content=json.dumps({'message':'Email is not registered'}))
+                return HttpResponse(status=401, content=json.dumps({'message':'Email is not registered. Please sign up first.'}))
             
         else:
             return HttpResponse(status=401, content=json.dumps({'message':'Authentication failed'}))
@@ -290,7 +290,7 @@ def comment(request, username, id):
     
     return HttpResponseNotAllowed(['GET', 'POST'])
 
-@login_required    
+@login_required(login_url='/index/')    
 def feed(request):
     request_user = request.user
     if request.method == 'GET':
