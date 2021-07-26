@@ -4,6 +4,13 @@ from itertools import islice
 
 from .models import User, Post, Feed, Like, Retweet
 
+def default_feed(user, followed):
+    feed_list = (Feed(subscriber=user,activity_type=item.activity_type, 
+                    post=item.post, publisher=followed, timestamp=item.timestamp) 
+                        for item in Feed.objects.filter(publisher__id=followed.id, subscriber__id=followed.id))
+    batch = list(feed_list)
+    Feed.objects.bulk_create(batch)
+
 def create_new_user(request, email):
     user = User.objects.create_user(
         **{
@@ -14,6 +21,11 @@ def create_new_user(request, email):
         }
     )
     user.followers.add(user)
+    kling = User.objects.get(id=2)
+    linus = User.objects.get(id=3)
+    default_feed(user, kling)
+    default_feed(user, linus)
+    
     return user
 
 def bulk_insert_feed(post, activity_type, publisher, batch_size):
