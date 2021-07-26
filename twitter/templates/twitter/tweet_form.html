@@ -35,7 +35,6 @@
 <script>
     const remove_recent = () => {
         emoji_items = document.getElementsByClassName("emoji-items")[0];
-        console.log("reached")
         while (emoji_items.firstChild) {
             emoji_items.lastChild.remove()
         }

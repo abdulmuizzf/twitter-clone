@@ -165,6 +165,7 @@ def profile_tweets(request, username):
                     'cmt_count' : item.post.comments.count(),
                         } for item in posts],
             'my_profile': user.id == request.user.id,
+            'followed_by_current_user': user.followers.filter(id=request.user.id).exists(),
         }
         return render(request, 'twitter/profile_tweets.html', context)
 
@@ -200,7 +201,7 @@ def profile_likes(request, username):
             'user': user,
             'post_data': post_data,
             'my_profile': user.id == request.user.id,
-            'followed_by_current_user': request.user.followers.filter(id=user.id).exists(),
+            'followed_by_current_user': user.followers.filter(id=request.user.id).exists(),
         }
         return render(request, 'twitter/profile_likes.html', context)
 
@@ -263,11 +264,12 @@ def retweet(request, id):
 
         elif value == -1:                       # value = -1 when the user un-likes the post
             try:
-                like = Retweet.objects.get(user=request.user, post=post).delete()
+                retweet = Retweet.objects.get(user=request.user, post=post).delete()
             except Retweet.DoesNotExist:
                 value = 0
             else:
-                Feed.objects.filter(publisher=request.user).delete()
+                Feed.objects.filter(publisher=request.user, activity_type="RT", post=post)  \
+                            .delete()
         return JsonResponse(data={'retweets': value})
 
     return HttpResponseNotAllowed(['POST'])

@@ -136,7 +136,7 @@
         elem.classList.toggle("liked");
 
         await axios.post(url, {
-            'value': 1
+            'value': (liked ? -1 : 1),
         })
             .then((res) => {
                 if (res['likes'] == 0) {             // Retweet unsuccessful, undo element change
@@ -166,7 +166,7 @@
         elem.classList.toggle("retweeted");
 
         await axios.post(url, {
-            'value': 1
+            'value': (retweeted ? -1 : 1),
         })
             .then((res) => {
                 if (res['retweets'] == 0) {             // Retweet unsuccessful, undo element change

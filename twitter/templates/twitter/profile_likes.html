@@ -45,13 +45,11 @@
                 </div>
                 <div class="profile-buttons">
                     {% if my_profile is False %}
-                        <button class="follow-button">
-                            {% if followed_by_current_user %}
-                                Unfollow
-                            {% else %}
-                                Follow
-                            {% endif %}
-                        </button>
+                    <button class="follow-button 
+                    {% if followed_by_current_user %}followed{% endif %}"
+                        onclick="follow(event,this,'{% url 'follow' user.id %}');">
+                        {% if followed_by_current_user %}Unfollow{% else %}Follow{% endif %}
+                    </button>
                     {% endif %}
                 </div>
             </div>
@@ -214,6 +212,52 @@ const retweet_post = async (event, elem, url) => {
                 });
     return true;
 }
+    const follow = async (event, elem, url) => {
+        event.stopPropagation();
+        event.preventDefault();
+        followed = elem.classList.contains("followed");
+        
+        if (followed) {
+            action = "unfollow"
+            elem.textContent = "Follow"
+        } else {
+            action = "follow"
+            elem.textContent = "Unfollow"
+        }
+        elem.classList.toggle("followed");
+
+        await axios.post(url, {
+            'action': action,
+            })
+            .then((res) => {
+                if (!res.data['success']) {         // Action unsuccessful, undo follow button change 
+                    if (followed) {
+                        elem.textContent = "Unfollow"
+                    } else {
+                        elem.textContent = "Follow"
+                    }
+                    elem.classList.toggle("followed");
+                }
+            })
+            .catch((err)=>{
+                console.log(err)
+            }
+        );
+    }
+    const logout = async (tweet_url) => {
+        var result = confirm("Confirm logout?");
+        if (result) {
+            await axios.get(tweet_url)
+                .then((res) => {
+                    if (res['login_url'])
+                        window.location = res['login_url'];
+                })
+                .catch((err) => {
+                    console.log(err);
+                });
+        }
+    }
+
 
 </script>
 

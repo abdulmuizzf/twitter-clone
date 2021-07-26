@@ -203,7 +203,6 @@
 
 <script>
     const go_back = () => {
-        console.log(document.referrer)
         if ('referrer' in document) {
             window.location = document.referrer;
         } else {
@@ -277,10 +276,10 @@
     }
 
     const like_post = async (event, elem, url) => {
-        liked = elem.classList.contains("liked");
-        like_text = elem.children[1].textContent
         event.stopPropagation();
         event.preventDefault();
+        liked = elem.classList.contains("liked");
+        like_text = elem.children[1].textContent
 
         if (liked) {
             likes = check_zero(parseInt(like_text) - 1);      // undo retweet
@@ -307,10 +306,10 @@
     }
 
     const retweet_post = async (event, elem, url) => {
-        retweeted = elem.classList.contains("retweeted");
-        rt_text = elem.children[1].textContent
         event.stopPropagation();
         event.preventDefault();
+        retweeted = elem.classList.contains("retweeted");
+        rt_text = elem.children[1].textContent
 
         if (retweeted) {
             retweets = check_zero(parseInt(rt_text) - 1);      // undo retweet
@@ -321,7 +320,7 @@
         elem.classList.toggle("retweeted");
 
         await axios.post(url, {
-            'value': 1
+            'value': (retweeted ? -1 : 1),
         })
             .then((res) => {
                 if (res['retweets'] == 0) {             // Retweet unsuccessful, undo element change

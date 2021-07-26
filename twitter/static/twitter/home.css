@@ -105,6 +105,7 @@ body {
     max-width: 50%;
     border-right: 1px solid var(--gray-two);
     border-bottom: none;
+    overflow: auto;
 }
 .home-header {
     padding: 10px;
